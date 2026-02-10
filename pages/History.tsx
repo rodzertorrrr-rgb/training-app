@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useData } from '../context/DataContext';
 import { Trash2, Calendar, CheckCircle2, History as HistoryIcon, ArrowUpRight, ChevronRight } from 'lucide-react';
@@ -16,7 +17,7 @@ const History: React.FC = () => {
 
   if (sessions.length === 0) {
     return (
-      <div className="text-center py-32 opacity-50">
+      <div className="text-center py-32 opacity-50 animate-fade-in">
         <div className="border border-zinc-800 w-16 h-16 flex items-center justify-center rounded-full mx-auto mb-6">
             <HistoryIcon className="text-zinc-600" size={24} />
         </div>
@@ -27,18 +28,19 @@ const History: React.FC = () => {
   }
 
   return (
-    <div className="pb-10">
-      <header className="mb-8 pl-4 border-l-4 border-primary">
+    <div className="pb-10 animate-fade-in">
+      <header className="mb-8 pl-4 border-l-4 border-primary animate-slide-down">
           <h2 className="text-3xl font-black text-white uppercase tracking-tight">Istoric</h2>
           <p className="text-zinc-500 text-xs font-mono uppercase tracking-widest mt-1">Sesiuni finalizate</p>
       </header>
       
       <div className="space-y-4">
-        {sessions.map((session) => (
+        {sessions.map((session, index) => (
           <div 
             key={session.id} 
             onClick={() => navigate(`/history/${session.id}`)}
-            className="group relative bg-card border border-zinc-800 p-6 hover:border-primary/50 transition-all duration-300 cursor-pointer active:scale-[0.99]"
+            style={{ animationDelay: `${index * 50}ms` }}
+            className="group relative bg-card border border-zinc-800 p-6 hover:border-primary/50 transition-all duration-300 cursor-pointer active:scale-[0.99] animate-slide-up-fade opacity-0 fill-mode-forwards"
           >
             {/* Header */}
             <div className="flex justify-between items-start mb-6 pb-4 border-b border-zinc-900">
@@ -52,7 +54,7 @@ const History: React.FC = () => {
               </div>
               <button 
                 onClick={(e) => handleDelete(e, session.id)}
-                className="w-8 h-8 flex items-center justify-center text-zinc-700 hover:text-red-500 hover:bg-red-500/10 transition-colors rounded-sm"
+                className="w-8 h-8 flex items-center justify-center text-zinc-700 hover:text-red-500 hover:bg-red-500/10 transition-colors rounded-sm active:scale-90"
               >
                 <Trash2 size={16} />
               </button>

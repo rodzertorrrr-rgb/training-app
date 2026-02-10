@@ -252,7 +252,7 @@ const ActiveWorkout: React.FC = () => {
   // LOADING STATE
   if (isSaving) {
       return (
-          <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center z-50 fixed inset-0">
+          <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center z-50 fixed inset-0 animate-fade-in">
               <div className="animate-spin text-primary mb-6">
                   <Loader size={64} />
               </div>
@@ -267,7 +267,7 @@ const ActiveWorkout: React.FC = () => {
     <div className="pb-40 animate-fade-in">
       
       {/* 1. PREMIUM HEADER */}
-      <div className="sticky top-0 bg-black/80 backdrop-blur-xl z-30 pt-4 pb-4 border-b border-white/5 -mx-5 px-5 flex justify-between items-center mb-6 shadow-2xl">
+      <div className="sticky top-0 bg-black/80 backdrop-blur-xl z-30 pt-4 pb-4 border-b border-white/5 -mx-5 px-5 flex justify-between items-center mb-6 shadow-2xl transition-all duration-300">
         <button onClick={() => setShowExitModal(true)} className="w-10 h-10 flex items-center justify-center rounded-full bg-surface border border-white/10 text-zinc-400 hover:text-white transition-all active:scale-95">
              <ArrowLeft size={20} />
         </button>
@@ -280,11 +280,12 @@ const ActiveWorkout: React.FC = () => {
              </span>
         </div>
 
+        {/* PRIMARY SAVE BUTTON - REPOSITIONED TO HEADER */}
         <button 
             onClick={triggerFinishFlow}
-            className="h-10 px-4 flex items-center justify-center bg-primary/10 border border-primary/20 text-primary hover:bg-gold-gradient hover:text-black transition-all active:scale-95 group"
+            className="h-10 px-4 flex items-center justify-center bg-primary/10 border border-primary/20 text-primary hover:bg-gold-gradient hover:text-black transition-all active:scale-95 group shadow-[0_0_10px_rgba(212,175,55,0.15)] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]"
         >
-            <span className="text-[10px] font-black uppercase tracking-widest mr-2">Finish</span>
+            <span className="text-[10px] font-black uppercase tracking-widest mr-2">SALVEAZĂ</span>
             <Check size={14} className="stroke-[3]" />
         </button>
       </div>
@@ -333,13 +334,13 @@ const ActiveWorkout: React.FC = () => {
                     <div className="flex items-center gap-2">
                         {/* Adjustment Buttons */}
                          <div className="flex flex-col gap-1 mr-2">
-                            <button onClick={() => adjustTimer(30)} className="bg-zinc-800 text-[8px] px-2 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700 border border-zinc-700">+30s</button>
-                            <button onClick={() => adjustTimer(-30)} className="bg-zinc-800 text-[8px] px-2 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700 border border-zinc-700">-30s</button>
+                            <button onClick={() => adjustTimer(30)} className="bg-zinc-800 text-[8px] px-2 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700 border border-zinc-700 active:bg-zinc-600 transition-colors">+30s</button>
+                            <button onClick={() => adjustTimer(-30)} className="bg-zinc-800 text-[8px] px-2 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700 border border-zinc-700 active:bg-zinc-600 transition-colors">-30s</button>
                          </div>
 
                         <button 
                             onClick={() => toggleTimer()}
-                            className="w-10 h-10 flex items-center justify-center bg-zinc-900 text-red-500 hover:bg-red-500/20 hover:text-red-400 transition-all border border-zinc-800 hover:border-red-500"
+                            className="w-10 h-10 flex items-center justify-center bg-zinc-900 text-red-500 hover:bg-red-500/20 hover:text-red-400 transition-all border border-zinc-800 hover:border-red-500 active:scale-95"
                         >
                             <StopCircle size={20} className="fill-current" />
                         </button>
@@ -371,12 +372,12 @@ const ActiveWorkout: React.FC = () => {
             const lastSessionData = getLastSessionExerciseData(ex.exerciseId);
 
             return (
-          <div key={ex.id} className={`transition-all duration-500 ${isCompleted ? 'opacity-100' : 'opacity-100'}`}>
+          <div key={ex.id} className={`transition-all duration-700 ease-out ${isCompleted ? 'opacity-100' : 'opacity-100'}`}>
             
             {/* Exercise Header */}
             <div className="flex items-start mb-3 pl-1 relative">
                 {/* Metallic Accent Line */}
-                <div className={`absolute left-0 top-0 bottom-0 w-[2px] ${isCompleted ? 'bg-gold-gradient shadow-[0_0_10px_rgba(212,175,55,0.5)]' : 'bg-zinc-800'}`}></div>
+                <div className={`absolute left-0 top-0 bottom-0 w-[2px] transition-all duration-700 ${isCompleted ? 'bg-gold-gradient shadow-[0_0_10px_rgba(212,175,55,0.5)] h-full' : 'bg-zinc-800 h-full'}`}></div>
                 
                 <div className="pl-5 flex-1">
                     <div className="flex justify-between items-start">
@@ -423,7 +424,7 @@ const ActiveWorkout: React.FC = () => {
                         {context && (
                             <button 
                                 onClick={() => toggleLegend(ex.exerciseId)}
-                                className={`w-8 h-8 flex items-center justify-center border transition-all ${isExpanded ? 'bg-zinc-800 border-zinc-700 text-white' : 'bg-black border-zinc-800 text-zinc-600 hover:text-primary'}`}
+                                className={`w-8 h-8 flex items-center justify-center border transition-all active:scale-95 ${isExpanded ? 'bg-zinc-800 border-zinc-700 text-white' : 'bg-black border-zinc-800 text-zinc-600 hover:text-primary'}`}
                             >
                                 <Info size={14} />
                             </button>
@@ -479,7 +480,7 @@ const ActiveWorkout: React.FC = () => {
 
                 <div className="divide-y divide-zinc-800/50">
                     {ex.sets.map((set, i) => (
-                    <div key={set.id} className={`grid grid-cols-12 gap-2 items-center p-2 transition-all relative ${
+                    <div key={set.id} className={`grid grid-cols-12 gap-2 items-center p-2 transition-all duration-300 relative ${
                             set.type === 'TOP_SET' 
                             ? 'bg-gradient-to-r from-primary/10 to-transparent' 
                             : 'bg-transparent'
@@ -504,33 +505,33 @@ const ActiveWorkout: React.FC = () => {
                         </div>
 
                         {/* Inputs */}
-                        <div className="col-span-3 relative">
+                        <div className="col-span-3 relative group/input">
                             <input 
                                 type="number" 
                                 placeholder="-" 
-                                className={`w-full bg-black border border-zinc-800 py-3 text-center text-base font-bold font-mono focus:border-primary focus:text-gold-gradient transition-all outline-none relative z-10 ${set.weight !== '' ? 'text-white border-zinc-700' : 'text-zinc-700'}`}
+                                className={`w-full bg-black border border-zinc-800 py-3 text-center text-base font-bold font-mono focus:border-primary focus:text-gold-gradient transition-all outline-none relative z-10 ${set.weight !== '' ? 'text-white border-zinc-700' : 'text-zinc-700'} focus:scale-105`}
                                 value={set.weight}
                                 onChange={(e) => handleSetUpdate(ex.id, set.id, 'weight', e.target.value)}
                             />
                             {/* Ghost Target (Weight) */}
                             {set.type === 'TOP_SET' && lastSessionData && set.weight === '' && (
-                                <div className="absolute top-full left-0 w-full text-center mt-0.5 pointer-events-none z-20">
+                                <div className="absolute top-full left-0 w-full text-center mt-0.5 pointer-events-none z-20 opacity-0 group-focus-within/input:opacity-100 transition-opacity">
                                     <span className="text-[8px] font-mono text-zinc-400 bg-black/80 px-1 border border-zinc-800">Last: {lastSessionData.weight}</span>
                                 </div>
                             )}
                         </div>
 
-                        <div className="col-span-3 relative">
+                        <div className="col-span-3 relative group/input">
                             <input 
                                 type="number" 
                                 placeholder="-" 
-                                className={`w-full bg-black border border-zinc-800 py-3 text-center text-base font-bold font-mono focus:border-primary focus:text-gold-gradient transition-all outline-none relative z-10 ${set.reps !== '' ? 'text-white border-zinc-700' : 'text-zinc-700'}`}
+                                className={`w-full bg-black border border-zinc-800 py-3 text-center text-base font-bold font-mono focus:border-primary focus:text-gold-gradient transition-all outline-none relative z-10 ${set.reps !== '' ? 'text-white border-zinc-700' : 'text-zinc-700'} focus:scale-105`}
                                 value={set.reps}
                                 onChange={(e) => handleSetUpdate(ex.id, set.id, 'reps', e.target.value)}
                             />
                              {/* Ghost Target (Reps) */}
                              {set.type === 'TOP_SET' && lastSessionData && set.reps === '' && (
-                                <div className="absolute top-full left-0 w-full text-center mt-0.5 pointer-events-none z-20">
+                                <div className="absolute top-full left-0 w-full text-center mt-0.5 pointer-events-none z-20 opacity-0 group-focus-within/input:opacity-100 transition-opacity">
                                     <span className="text-[8px] font-mono text-zinc-400 bg-black/80 px-1 border border-zinc-800">Last: {lastSessionData.reps}</span>
                                 </div>
                             )}
@@ -541,13 +542,13 @@ const ActiveWorkout: React.FC = () => {
                                 type="number" 
                                 placeholder="-" 
                                 max={5}
-                                className="w-8 h-8 bg-transparent text-center text-sm font-bold text-zinc-400 focus:text-white outline-none mr-2 border-b border-transparent focus:border-primary"
+                                className="w-8 h-8 bg-transparent text-center text-sm font-bold text-zinc-400 focus:text-white outline-none mr-2 border-b border-transparent focus:border-primary transition-all focus:scale-110"
                                 value={set.rir}
                                 onChange={(e) => handleSetUpdate(ex.id, set.id, 'rir', e.target.value)}
                             />
                             <button 
                                 onClick={() => toggleTimer(ex.exerciseId)}
-                                className="w-9 h-9 flex items-center justify-center bg-zinc-900 text-zinc-500 hover:text-primary hover:bg-zinc-800 transition-colors border border-zinc-800 shadow-sm"
+                                className="w-9 h-9 flex items-center justify-center bg-zinc-900 text-zinc-500 hover:text-primary hover:bg-zinc-800 transition-colors border border-zinc-800 shadow-sm active:scale-95"
                             >
                                 <Timer size={14} />
                             </button>
@@ -558,10 +559,10 @@ const ActiveWorkout: React.FC = () => {
 
                 {/* Footer Actions */}
                 <div className="flex border-t border-zinc-800 divide-x divide-zinc-800">
-                    <button onClick={() => addSet(ex.id, 'RAMP_UP')} className="flex-1 py-3 text-[9px] font-black text-zinc-600 hover:text-white hover:bg-white/5 uppercase tracking-wider transition-colors">
+                    <button onClick={() => addSet(ex.id, 'RAMP_UP')} className="flex-1 py-3 text-[9px] font-black text-zinc-600 hover:text-white hover:bg-white/5 uppercase tracking-wider transition-colors active:bg-zinc-800">
                         + Warm Up
                     </button>
-                    <button onClick={() => addSet(ex.id, 'BACK_OFF')} className="flex-1 py-3 text-[9px] font-black text-zinc-600 hover:text-white hover:bg-white/5 uppercase tracking-wider transition-colors">
+                    <button onClick={() => addSet(ex.id, 'BACK_OFF')} className="flex-1 py-3 text-[9px] font-black text-zinc-600 hover:text-white hover:bg-white/5 uppercase tracking-wider transition-colors active:bg-zinc-800">
                         + Back Off
                     </button>
                 </div>
@@ -570,25 +571,12 @@ const ActiveWorkout: React.FC = () => {
         )})}
       </div>
 
-      {/* 4. FOOTER ACTION BAR */}
-      <div className="fixed bottom-[110px] left-6 right-6 z-30 flex gap-4 max-w-2xl mx-auto pointer-events-none">
-         <div className="flex-1 pointer-events-auto">
-            <button 
-                onClick={triggerFinishFlow}
-                className="w-full bg-gold-gradient text-black font-black uppercase tracking-[0.15em] text-sm py-4 shadow-[0_0_20px_rgba(212,175,55,0.4)] flex items-center justify-center gap-3 transition-transform active:scale-[0.98] border border-white/20 hover:brightness-110"
-            >
-                <Save size={18} className="stroke-[3]" />
-                Finalizează Sesiunea
-            </button>
-         </div>
-      </div>
-
       {/* 5. FINISH SUMMARY MODAL */}
       {showFinishModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-md animate-fade-in" onClick={() => setShowFinishModal(false)}></div>
             
-            <div className="relative bg-[#050505] border border-zinc-800 w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up">
+            <div className="relative bg-[#050505] border border-zinc-800 w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up-fade transform">
                 
                 {/* Modal Header */}
                 <div className="bg-zinc-950 p-6 border-b border-zinc-800 flex justify-between items-center">
@@ -596,7 +584,7 @@ const ActiveWorkout: React.FC = () => {
                         <h3 className="text-xl font-black text-white uppercase tracking-tight">System Log</h3>
                         <p className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest">{draftSession.dayName.split(':')[0]}</p>
                     </div>
-                    <button onClick={() => setShowFinishModal(false)} className="w-8 h-8 flex items-center justify-center bg-black border border-zinc-800 text-zinc-500 hover:text-white">
+                    <button onClick={() => setShowFinishModal(false)} className="w-8 h-8 flex items-center justify-center bg-black border border-zinc-800 text-zinc-500 hover:text-white active:scale-95">
                         <X size={16} />
                     </button>
                 </div>
@@ -619,14 +607,14 @@ const ActiveWorkout: React.FC = () => {
                     {/* Progress Bar */}
                     <div className="w-full h-1 bg-zinc-900 overflow-hidden">
                         <div 
-                            className="h-full bg-gold-gradient transition-all duration-500 shadow-[0_0_10px_#D4AF37]"
+                            className="h-full bg-gold-gradient transition-all duration-1000 ease-out shadow-[0_0_10px_#D4AF37]"
                             style={{ width: `${(completedExercisesCount / totalExercises) * 100}%` }}
                         ></div>
                     </div>
 
                     {/* Warning Messages */}
                     {completedExercisesCount === 0 ? (
-                        <div className="bg-red-900/10 border border-red-900/30 p-3 flex items-start gap-3">
+                        <div className="bg-red-900/10 border border-red-900/30 p-3 flex items-start gap-3 animate-scale-in">
                             <AlertCircle className="text-red-500 shrink-0" size={16} />
                             <p className="text-[11px] text-red-200 leading-tight">
                                 <strong className="block text-red-500 mb-1 uppercase text-[10px] tracking-wider">Atenție</strong>
@@ -634,7 +622,7 @@ const ActiveWorkout: React.FC = () => {
                             </p>
                         </div>
                     ) : completedExercisesCount < totalExercises ? (
-                        <div className="bg-yellow-900/10 border border-yellow-900/30 p-3 flex items-start gap-3">
+                        <div className="bg-yellow-900/10 border border-yellow-900/30 p-3 flex items-start gap-3 animate-scale-in">
                             <CheckCircle2 className="text-yellow-500 shrink-0" size={16} />
                             <p className="text-[11px] text-yellow-200 leading-tight">
                                 <strong className="block text-yellow-500 mb-1 uppercase text-[10px] tracking-wider">Parțial Complet</strong>
@@ -642,7 +630,7 @@ const ActiveWorkout: React.FC = () => {
                             </p>
                         </div>
                     ) : (
-                         <div className="bg-emerald-900/10 border border-emerald-900/30 p-3 flex items-start gap-3">
+                         <div className="bg-emerald-900/10 border border-emerald-900/30 p-3 flex items-start gap-3 animate-scale-in">
                             <CheckCircle2 className="text-emerald-500 shrink-0" size={16} />
                             <p className="text-[11px] text-emerald-200 leading-tight">
                                 <strong className="block text-emerald-500 mb-1 uppercase text-[10px] tracking-wider">Excelent</strong>
@@ -673,7 +661,7 @@ const ActiveWorkout: React.FC = () => {
       {/* 6. EXIT MODAL */}
       {showExitModal && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-8 animate-fade-in">
-            <div className="bg-card border border-zinc-800 p-8 w-full max-w-sm shadow-2xl">
+            <div className="bg-card border border-zinc-800 p-8 w-full max-w-sm shadow-2xl animate-scale-in">
                 <div className="flex justify-center mb-6 text-primary">
                     <AlertCircle size={48} className="stroke-[1.5]" />
                 </div>
@@ -683,13 +671,13 @@ const ActiveWorkout: React.FC = () => {
                 <div className="space-y-3">
                     <button 
                         onClick={() => handleExit(false)}
-                        className="w-full bg-black border border-zinc-800 text-white font-bold py-4 hover:bg-zinc-900 transition-colors uppercase tracking-widest text-xs"
+                        className="w-full bg-black border border-zinc-800 text-white font-bold py-4 hover:bg-zinc-900 transition-colors uppercase tracking-widest text-xs active:scale-95"
                     >
                         Înapoi la Antrenament
                     </button>
                     <button 
                         onClick={() => handleExit(true)}
-                        className="w-full text-red-500 font-bold py-4 hover:text-red-400 transition-colors uppercase tracking-widest text-xs"
+                        className="w-full text-red-500 font-bold py-4 hover:text-red-400 transition-colors uppercase tracking-widest text-xs active:scale-95"
                     >
                         Șterge și Ieși
                     </button>
