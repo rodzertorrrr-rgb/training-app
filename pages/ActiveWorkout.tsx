@@ -252,7 +252,7 @@ const ActiveWorkout: React.FC = () => {
   // LOADING STATE
   if (isSaving) {
       return (
-          <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center z-50 fixed inset-0 animate-fade-in">
+          <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center z-[100] fixed inset-0 animate-fade-in">
               <div className="animate-spin text-primary mb-6">
                   <Loader size={64} />
               </div>
@@ -573,10 +573,11 @@ const ActiveWorkout: React.FC = () => {
 
       {/* 5. FINISH SUMMARY MODAL */}
       {showFinishModal && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
-            <div className="absolute inset-0 bg-black/90 backdrop-blur-md animate-fade-in" onClick={() => setShowFinishModal(false)}></div>
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4">
+            {/* Backdrop with higher opacity for focus */}
+            <div className="absolute inset-0 bg-black/95 backdrop-blur-md animate-fade-in" onClick={() => setShowFinishModal(false)}></div>
             
-            <div className="relative bg-[#050505] border border-zinc-800 w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up-fade transform">
+            <div className="relative bg-[#050505] border-t sm:border border-zinc-800 w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up-fade transform">
                 
                 {/* Modal Header */}
                 <div className="bg-zinc-950 p-6 border-b border-zinc-800 flex justify-between items-center">
@@ -640,8 +641,8 @@ const ActiveWorkout: React.FC = () => {
                     )}
                 </div>
 
-                {/* Primary Action */}
-                <div className="p-6 pt-0">
+                {/* Primary Action - Added extra bottom padding for Safe Area */}
+                <div className="p-6 pt-0 pb-10">
                     <button 
                         onClick={confirmSave}
                         className="w-full bg-gold-gradient hover:brightness-110 text-black font-black uppercase tracking-[0.2em] py-5 text-sm shadow-glow transition-all active:scale-[0.98]"
@@ -660,7 +661,7 @@ const ActiveWorkout: React.FC = () => {
 
       {/* 6. EXIT MODAL */}
       {showExitModal && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-8 animate-fade-in">
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[100] p-8 animate-fade-in">
             <div className="bg-card border border-zinc-800 p-8 w-full max-w-sm shadow-2xl animate-scale-in">
                 <div className="flex justify-center mb-6 text-primary">
                     <AlertCircle size={48} className="stroke-[1.5]" />
