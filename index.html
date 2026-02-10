@@ -17,15 +17,15 @@
         theme: {
           extend: {
             colors: {
-              background: '#000000', // True Black
-              surface: '#080808',    // Deep Void
-              card: '#0F0F0F',       // Matte Black
-              border: '#27272a',     // Industrial Zinc
-              primary: '#D4AF37',    // Metallic Gold
+              background: '#000000',
+              surface: '#080808',
+              card: '#0F0F0F',
+              border: '#27272a',
+              primary: '#D4AF37',
               primaryHover: '#B5952F',
               primaryDim: 'rgba(212, 175, 55, 0.1)',
-              secondary: '#525252',  // Neutral Grey
-              accent: '#FFFFFF',     // Pure White
+              secondary: '#525252',
+              accent: '#FFFFFF',
             },
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
@@ -95,15 +95,12 @@
       input:focus, button:focus {
         outline: none;
       }
-      /* Hardcore / Industrial Overrides */
       .rounded-sm, .rounded, .rounded-lg, .rounded-xl, .rounded-2xl {
-        border-radius: 0px !important; /* Cyberpunk sharp edges */
+        border-radius: 0px !important;
       }
       .rounded-full {
-        border-radius: 9999px !important; /* Keep circular buttons circular */
+        border-radius: 9999px !important;
       }
-      
-      /* Gold Text Utility */
       .text-gold {
         color: #D4AF37;
       }
@@ -126,24 +123,90 @@
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.08);
       }
+      /* Loading Spinner for Initial State */
+      .initial-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        background-color: #000;
+        color: #D4AF37;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(212, 175, 55, 0.3);
+        border-radius: 50%;
+        border-top-color: #D4AF37;
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 20px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      #error-display {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: #110000;
+        color: #ff5555;
+        padding: 20px;
+        z-index: 10000;
+        font-family: monospace;
+        overflow: auto;
+        font-size: 14px;
+        white-space: pre-wrap;
+      }
     </style>
+  
+  <!-- Critical Error Handler -->
+  <script>
+    window.onerror = function(msg, url, line, col, error) {
+      const display = document.getElementById('error-display');
+      const loader = document.getElementById('initial-loader');
+      if (display) {
+        if(loader) loader.style.display = 'none';
+        display.style.display = 'block';
+        display.innerHTML += `<strong>CRITICAL ERROR:</strong><br>${msg}<br><small>${url}:${line}:${col}</small><br><br>`;
+        console.error("Global Error Caught:", msg, error);
+      }
+    };
+  </script>
+
+  <!-- Import Map - CLEAN VERSION (React 18 ONLY) -->
   <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "recharts": "https://esm.sh/recharts@^3.7.0",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
-    "uuid": "https://esm.sh/uuid@^13.0.0",
-    "jspdf-autotable": "https://esm.sh/jspdf-autotable@^5.0.7",
-    "jspdf": "https://esm.sh/jspdf@^4.1.0"
+    "react": "https://esm.sh/react@18.2.0",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?external=react,react-dom",
+    "@remix-run/router": "https://esm.sh/@remix-run/router@1.15.3",
+    "lucide-react": "https://esm.sh/lucide-react@0.294.0?external=react,react-dom",
+    "recharts": "https://esm.sh/recharts@2.12.0?external=react,react-dom",
+    "uuid": "https://esm.sh/uuid@9.0.1",
+    "jspdf-autotable": "https://esm.sh/jspdf-autotable@3.8.2",
+    "jspdf": "https://esm.sh/jspdf@2.5.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
   }
 }
 </script>
 </head>
   <body>
-    <div id="root"></div>
+    <div id="error-display"></div>
+    <div id="root">
+      <!-- Content visible before React loads -->
+      <div id="initial-loader" class="initial-loader">
+        <div class="spinner"></div>
+        <div style="font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: 0.2em; font-size: 12px;">LOADING SYSTEM</div>
+      </div>
+    </div>
   </body>
 </html>

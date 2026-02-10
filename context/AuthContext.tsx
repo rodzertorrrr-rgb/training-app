@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
 
@@ -8,6 +9,7 @@ interface AuthContextType {
   register: (name: string) => void;
   logout: () => void;
   deleteUser: (userId: string, force?: boolean) => void;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,19 +17,28 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load list of users
-    const usersList = localStorage.getItem('rdz_users_list');
-    if (usersList) {
-      setAvailableUsers(JSON.parse(usersList));
-    }
+    // Simulate loading delay for stability and check storage
+    const initAuth = async () => {
+        try {
+            const usersList = localStorage.getItem('rdz_users_list');
+            if (usersList) {
+            setAvailableUsers(JSON.parse(usersList));
+            }
 
-    // Check if a user is currently logged in session
-    const currentUser = localStorage.getItem('rdz_current_user');
-    if (currentUser) {
-      setUser(JSON.parse(currentUser));
-    }
+            const currentUser = localStorage.getItem('rdz_current_user');
+            if (currentUser) {
+            setUser(JSON.parse(currentUser));
+            }
+        } catch (e) {
+            console.error("Auth init failed", e);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    initAuth();
   }, []);
 
   const saveUsersList = (users: User[]) => {
@@ -90,8 +101,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  if (isLoading) {
+      return <div className="min-h-screen w-full bg-black flex items-center justify-center"></div>;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, availableUsers, login, register, logout, deleteUser }}>
+    <AuthContext.Provider value={{ user, availableUsers, login, register, logout, deleteUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,7 +8,7 @@ import { User as UserType } from '../types';
 const Login: React.FC = () => {
   const [newName, setNewName] = useState('');
   const [userToDelete, setUserToDelete] = useState<UserType | null>(null);
-  const { availableUsers, register, login, deleteUser } = useAuth();
+  const { availableUsers, register, login, deleteUser, user } = useAuth();
   const navigate = useNavigate();
   
   // Cinematic Animation State
@@ -16,6 +16,12 @@ const Login: React.FC = () => {
   const [introPhase, setIntroPhase] = useState(0); // 0: Start, 1: Logo Reveal, 2: Content
 
   useEffect(() => {
+    // If user is already authenticated, redirect immediately
+    if (user) {
+        navigate('/');
+        return;
+    }
+
     // Sequence the animation
     const timer1 = setTimeout(() => setIntroPhase(1), 500);
     const timer2 = setTimeout(() => {
@@ -27,7 +33,7 @@ const Login: React.FC = () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
     };
-  }, []);
+  }, [user, navigate]);
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
