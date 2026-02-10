@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist',
+    sourcemap: true, // CRITICAL: Enables seeing original code line numbers in production errors
   }
 });

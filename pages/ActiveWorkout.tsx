@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
@@ -112,23 +113,10 @@ const ActiveWorkout: React.FC = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  // LOADING STATE
-  if (isSaving) {
-      return (
-          <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center z-50 fixed inset-0">
-              <div className="animate-spin text-primary mb-6">
-                  <Loader size={64} />
-              </div>
-              <h2 className="text-2xl font-black text-gold-gradient uppercase tracking-widest animate-pulse">Saving System...</h2>
-          </div>
-      );
-  }
-
-  if (!draftSession) return null;
-
   // --- LOGIC HELPERS ---
 
   const handleSetUpdate = (exerciseId: string, setId: string, field: keyof SetLog, value: string) => {
+    if (!draftSession) return;
     const updatedExercises = draftSession.exercises.map(ex => {
       if (ex.id !== exerciseId) return ex;
 
@@ -162,6 +150,7 @@ const ActiveWorkout: React.FC = () => {
   };
 
   const addSet = (exerciseId: string, type: 'RAMP_UP' | 'BACK_OFF') => {
+    if (!draftSession) return;
     const updatedExercises = draftSession.exercises.map(ex => {
       if (ex.id !== exerciseId) return ex;
       
@@ -193,6 +182,7 @@ const ActiveWorkout: React.FC = () => {
   };
 
   const removeSet = (exerciseId: string, setId: string) => {
+    if (!draftSession) return;
     const updatedExercises = draftSession.exercises.map(ex => {
       if (ex.id !== exerciseId) return ex;
       return { ...ex, sets: ex.sets.filter(s => s.id !== setId) };
@@ -225,12 +215,12 @@ const ActiveWorkout: React.FC = () => {
 
   // --- CALCULATIONS ---
 
-  const completedExercisesCount = draftSession.exercises.filter(ex => 
+  const completedExercisesCount = draftSession ? draftSession.exercises.filter(ex => 
     ex.sets.some(s => (s.type === 'TOP_SET' || s.type === 'BACK_OFF') && s.weight !== '' && s.reps !== '' && Number(s.weight) > 0)
-  ).length;
+  ).length : 0;
 
-  const totalExercises = draftSession.exercises.length;
-  const durationMinutes = Math.floor((Date.now() - draftSession.startedAt) / 1000 / 60);
+  const totalExercises = draftSession ? draftSession.exercises.length : 0;
+  const durationMinutes = draftSession ? Math.floor((Date.now() - draftSession.startedAt) / 1000 / 60) : 0;
 
   // Timer Recommendation Logic
   const getRestTarget = () => {
@@ -245,7 +235,7 @@ const ActiveWorkout: React.FC = () => {
   const isRestComplete = elapsed >= restTarget;
   const timerProgress = Math.min((elapsed / restTarget) * 100, 100);
 
-  // Send Notification when done
+  // Send Notification when done (THIS WAS THE CAUSE OF ERROR #300 - MOVED UP BEFORE RETURNS)
   useEffect(() => {
       if (restStart && isRestComplete && elapsed === restTarget) {
           if ('Notification' in window && Notification.permission === 'granted') {
@@ -255,6 +245,23 @@ const ActiveWorkout: React.FC = () => {
           if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
       }
   }, [isRestComplete, restStart, elapsed, restTarget]);
+
+
+  // --- EARLY RETURNS (MUST BE AFTER ALL HOOKS) ---
+
+  // LOADING STATE
+  if (isSaving) {
+      return (
+          <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center z-50 fixed inset-0">
+              <div className="animate-spin text-primary mb-6">
+                  <Loader size={64} />
+              </div>
+              <h2 className="text-2xl font-black text-gold-gradient uppercase tracking-widest animate-pulse">Saving System...</h2>
+          </div>
+      );
+  }
+
+  if (!draftSession) return null;
 
   return (
     <div className="pb-40 animate-fade-in">
