@@ -4,143 +4,143 @@ import { ProgramDay, EducationalSection, MasterExercise } from './types';
 export const TRAINING_PROGRAM: ProgramDay[] = [
   {
     id: 'day1',
-    name: 'ZIUA 1: Umeri + Piept (Push)',
+    name: 'ZIUA 1: Umeri + Piept (Împins)',
     exercises: [
-      { id: 'd1_1', name: 'Ridicări laterale', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 2, targetReps: '10-15 Top / 15-25 Back', targetRir: 0 },
-      { id: 'd1_2', name: 'Presă înclinată la aparat', defaultRampUpSets: 2, hasTopSet: true, defaultBackOffSets: 1, targetReps: '6-10 Top / 8-12 Back', targetRir: 0 },
-      { id: 'd1_3', name: 'Bench Press (Volum)', defaultRampUpSets: 1, hasTopSet: false, defaultBackOffSets: 2, targetReps: '6-12', targetRir: 1 },
-      { id: 'd1_4', name: 'Fluturări cablu (inferior)', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 3, targetReps: '12-25', targetRir: 1 },
-      { id: 'd1_5', name: 'Triceps Pushdown', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '8-12 Top / 12-20 Back', targetRir: 0 },
-      { id: 'd1_6', name: 'Overhead Extension', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
+      { id: 'd1_1', name: 'Ridicări laterale la cablu/gantere', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 2, targetReps: '10-15 Top / 15-25 Back', targetRir: 0 },
+      { id: 'd1_2', name: 'Împins înclinat la aparat (Chest Press)', defaultRampUpSets: 2, hasTopSet: true, defaultBackOffSets: 1, targetReps: '6-10 Top / 8-12 Back', targetRir: 0 },
+      { id: 'd1_3', name: 'Împins din culcat cu bara (Orizontal)', defaultRampUpSets: 1, hasTopSet: false, defaultBackOffSets: 2, targetReps: '6-12', targetRir: 1 },
+      { id: 'd1_4', name: 'Fluturări la cablu (Partea inferioară)', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 3, targetReps: '12-25', targetRir: 1 },
+      { id: 'd1_5', name: 'Extensii triceps la helcometru', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '8-12 Top / 12-20 Back', targetRir: 0 },
+      { id: 'd1_6', name: 'Extensii triceps deasupra capului', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
     ]
   },
   {
     id: 'day2',
-    name: 'ZIUA 2: Picioare (Quads/Calves)',
+    name: 'ZIUA 2: Picioare (Cvadriceps/Gambe)',
     exercises: [
-      { id: 'd2_1', name: 'Genuflexiuni (Variație)', defaultRampUpSets: 3, hasTopSet: true, defaultBackOffSets: 1, targetReps: '5-8 Top / 8-12 Back', targetRir: 0 },
-      { id: 'd2_2', name: 'Fandări / Split Squat', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '8-15', targetRir: 1 },
-      { id: 'd2_3', name: 'Extensii cvadriceps', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 2, targetReps: '10-15 Top / 15-25 Back', targetRir: 0 },
-      { id: 'd2_4', name: 'Adductor Machine', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '12-20', targetRir: 2 },
-      { id: 'd2_5', name: 'Standing Calf Raise', defaultRampUpSets: 1, hasTopSet: false, defaultBackOffSets: 3, targetReps: '10-20', targetRir: 1 },
-      { id: 'd2_6', name: 'Seated Calf Raise', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 3, targetReps: '12-25', targetRir: 1 },
+      { id: 'd2_1', name: 'Genuflexiuni (Variație la alegere)', defaultRampUpSets: 3, hasTopSet: true, defaultBackOffSets: 1, targetReps: '5-8 Top / 8-12 Back', targetRir: 0 },
+      { id: 'd2_2', name: 'Fandări sau Genuflexiuni bulgărești', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '8-15', targetRir: 1 },
+      { id: 'd2_3', name: 'Extensii cvadriceps la aparat', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 2, targetReps: '10-15 Top / 15-25 Back', targetRir: 0 },
+      { id: 'd2_4', name: 'Adducții la aparat', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '12-20', targetRir: 2 },
+      { id: 'd2_5', name: 'Ridicări pe vârfuri din picioare', defaultRampUpSets: 1, hasTopSet: false, defaultBackOffSets: 3, targetReps: '10-20', targetRir: 1 },
+      { id: 'd2_6', name: 'Ridicări pe vârfuri din șezut', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 3, targetReps: '12-25', targetRir: 1 },
     ]
   },
   {
     id: 'day3',
-    name: 'ZIUA 3: Spate + Biceps + Rear Delt',
+    name: 'ZIUA 3: Spate + Biceps + Deltoid Posterior',
     exercises: [
-      { id: 'd3_1', name: 'Tracțiuni / Lat Pulldown', defaultRampUpSets: 2, hasTopSet: true, defaultBackOffSets: 1, targetReps: '6-10 Top / 8-12 Back', targetRir: 0 },
-      { id: 'd3_2', name: 'Ramat (Bară/Aparat)', defaultRampUpSets: 2, hasTopSet: true, defaultBackOffSets: 1, targetReps: '6-8 Top / 8-12 Back', targetRir: 0 },
-      { id: 'd3_3', name: 'Ramat Cablu', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
-      { id: 'd3_4', name: 'Rear Delt Fly/Row', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 5, targetReps: '12-25', targetRir: 1 },
-      { id: 'd3_5', name: 'Biceps Curl (Coate sprijinite)', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '8-12 Top / 12-20 Back', targetRir: 0 },
-      { id: 'd3_6', name: 'Piept Ușor (Volum)', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '12-15', targetRir: 3 },
+      { id: 'd3_1', name: 'Tracțiuni la bară sau helcometru', defaultRampUpSets: 2, hasTopSet: true, defaultBackOffSets: 1, targetReps: '6-10 Top / 8-12 Back', targetRir: 0 },
+      { id: 'd3_2', name: 'Ramat cu bara sau la aparat', defaultRampUpSets: 2, hasTopSet: true, defaultBackOffSets: 1, targetReps: '6-8 Top / 8-12 Back', targetRir: 0 },
+      { id: 'd3_3', name: 'Ramat la cablu din șezut', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
+      { id: 'd3_4', name: 'Fluturări pentru deltoid posterior', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 5, targetReps: '12-25', targetRir: 1 },
+      { id: 'd3_5', name: 'Flexii biceps la banca Scott', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '8-12 Top / 12-20 Back', targetRir: 0 },
+      { id: 'd3_6', name: 'Împins pentru piept (Volum ușor)', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '12-15', targetRir: 3 },
     ]
   },
   {
     id: 'day4',
-    name: 'ZIUA 4: Picioare (Hams/Glutes)',
+    name: 'ZIUA 4: Picioare (Femurali/Fesieri)',
     exercises: [
-      { id: 'd4_1', name: 'RDL (Îndreptări Românești)', defaultRampUpSets: 3, hasTopSet: true, defaultBackOffSets: 1, targetReps: '6-10 Top / 8-12 Back', targetRir: 1 },
-      { id: 'd4_2', name: 'Seated Leg Curl', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '10-15 Top / 15-20 Back', targetRir: 0 },
-      { id: 'd4_3', name: 'Bent-over Leg Curl', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '12-20', targetRir: 1 },
-      { id: 'd4_4', name: 'Hip Thrust', defaultRampUpSets: 1, hasTopSet: false, defaultBackOffSets: 2, targetReps: '8-12', targetRir: 1 },
-      { id: 'd4_5', name: 'Glute Isolation', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
-      { id: 'd4_6', name: 'Back Extension / Reverse Hyper', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 2 },
-      { id: 'd4_7', name: 'Standing Calf Raise', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 2, targetReps: '10-15 Top / 15-20 Back', targetRir: 1 },
+      { id: 'd4_1', name: 'Îndreptări românești (RDL)', defaultRampUpSets: 3, hasTopSet: true, defaultBackOffSets: 1, targetReps: '6-10 Top / 8-12 Back', targetRir: 1 },
+      { id: 'd4_2', name: 'Flexii femurali din șezut', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '10-15 Top / 15-20 Back', targetRir: 0 },
+      { id: 'd4_3', name: 'Flexii femurali din culcat', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '12-20', targetRir: 1 },
+      { id: 'd4_4', name: 'Hip Thrust (Extensii șold)', defaultRampUpSets: 1, hasTopSet: false, defaultBackOffSets: 2, targetReps: '8-12', targetRir: 1 },
+      { id: 'd4_5', name: 'Abducții fesieri', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
+      { id: 'd4_6', name: 'Extensii lombare (Hiperextensii)', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 2 },
+      { id: 'd4_7', name: 'Ridicări pe vârfuri din picioare', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 2, targetReps: '10-15 Top / 15-20 Back', targetRir: 1 },
     ]
   },
   {
     id: 'day5',
     name: 'ZIUA 5: Brațe + Umeri (Volum)',
     exercises: [
-      { id: 'd5_1', name: 'Biceps Curl (Sprijinit)', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '8-12 Top / 12-20 Back', targetRir: 0 },
-      { id: 'd5_2', name: 'Incline DB Curl', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
-      { id: 'd5_3', name: 'Hammer Curl', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '8-12', targetRir: 1 },
-      { id: 'd5_4', name: 'Triceps Pushdown', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '8-12 Top / 12-20 Back', targetRir: 0 },
-      { id: 'd5_5', name: 'Overhead Extension', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
-      { id: 'd5_6', name: 'Ridicări Laterale Cablu', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 3, targetReps: '15-25', targetRir: 1 },
+      { id: 'd5_1', name: 'Flexii biceps cu gantere/bara', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '8-12 Top / 12-20 Back', targetRir: 0 },
+      { id: 'd5_2', name: 'Flexii biceps înclinat', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
+      { id: 'd5_3', name: 'Flexii ciocan (Hammer Curls)', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '8-12', targetRir: 1 },
+      { id: 'd5_4', name: 'Extensii triceps cu sfoara', defaultRampUpSets: 1, hasTopSet: true, defaultBackOffSets: 1, targetReps: '8-12 Top / 12-20 Back', targetRir: 0 },
+      { id: 'd5_5', name: 'Extensii triceps deasupra capului', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 2, targetReps: '10-15', targetRir: 1 },
+      { id: 'd5_6', name: 'Ridicări laterale la cablu', defaultRampUpSets: 0, hasTopSet: false, defaultBackOffSets: 3, targetReps: '15-25', targetRir: 1 },
     ]
   }
 ];
 
 export const MASTER_EXERCISE_LIST: MasterExercise[] = [
     // PIEPT
-    { id: 'chest_1', name: 'Bench Press (Bară)', muscleGroup: 'Piept' },
-    { id: 'chest_2', name: 'Incline Bench Press (Bară)', muscleGroup: 'Piept' },
-    { id: 'chest_3', name: 'Bench Press (Galtere)', muscleGroup: 'Piept' },
-    { id: 'chest_4', name: 'Incline Press (Galtere)', muscleGroup: 'Piept' },
-    { id: 'chest_5', name: 'Chest Press (Aparat)', muscleGroup: 'Piept' },
-    { id: 'chest_6', name: 'Incline Machine Press', muscleGroup: 'Piept' },
-    { id: 'chest_7', name: 'Fluturări Cablu (Crossover)', muscleGroup: 'Piept' },
-    { id: 'chest_8', name: 'Pec Deck / Butterfly', muscleGroup: 'Piept' },
-    { id: 'chest_9', name: 'Dips (Paralele)', muscleGroup: 'Piept' },
-    { id: 'chest_10', name: 'Push-ups (Flotări)', muscleGroup: 'Piept' },
+    { id: 'chest_1', name: 'Împins cu bara din culcat', muscleGroup: 'Piept' },
+    { id: 'chest_2', name: 'Împins înclinat cu bara', muscleGroup: 'Piept' },
+    { id: 'chest_3', name: 'Împins cu gantere din culcat', muscleGroup: 'Piept' },
+    { id: 'chest_4', name: 'Împins înclinat cu gantere', muscleGroup: 'Piept' },
+    { id: 'chest_5', name: 'Împins la aparat (Chest Press)', muscleGroup: 'Piept' },
+    { id: 'chest_6', name: 'Împins înclinat la aparat', muscleGroup: 'Piept' },
+    { id: 'chest_7', name: 'Fluturări la cabluri (Crossover)', muscleGroup: 'Piept' },
+    { id: 'chest_8', name: 'Fluturări la aparat (Pec Deck)', muscleGroup: 'Piept' },
+    { id: 'chest_9', name: 'Flotări la paralele (Dips)', muscleGroup: 'Piept' },
+    { id: 'chest_10', name: 'Flotări la sol', muscleGroup: 'Piept' },
 
     // SPATE
-    { id: 'back_1', name: 'Tracțiuni (Pull-ups)', muscleGroup: 'Spate' },
-    { id: 'back_2', name: 'Lat Pulldown (Priză largă)', muscleGroup: 'Spate' },
-    { id: 'back_3', name: 'Lat Pulldown (Priză neutră)', muscleGroup: 'Spate' },
-    { id: 'back_4', name: 'Ramat cu Bara (Bent Over Row)', muscleGroup: 'Spate' },
-    { id: 'back_5', name: 'Ramat cu Gantera', muscleGroup: 'Spate' },
-    { id: 'back_6', name: 'Seated Cable Row', muscleGroup: 'Spate' },
-    { id: 'back_7', name: 'T-Bar Row (Piept sprijinit)', muscleGroup: 'Spate' },
-    { id: 'back_8', name: 'Pullover Cablu', muscleGroup: 'Spate' },
-    { id: 'back_9', name: 'Single Arm Lat Pulldown', muscleGroup: 'Spate' },
-    { id: 'back_10', name: 'Machine Row', muscleGroup: 'Spate' },
+    { id: 'back_1', name: 'Tracțiuni la bară (Pull-ups)', muscleGroup: 'Spate' },
+    { id: 'back_2', name: 'Tracțiuni la helcometru (Priză largă)', muscleGroup: 'Spate' },
+    { id: 'back_3', name: 'Tracțiuni la helcometru (Priză neutră)', muscleGroup: 'Spate' },
+    { id: 'back_4', name: 'Ramat cu bara (Bent Over Row)', muscleGroup: 'Spate' },
+    { id: 'back_5', name: 'Ramat cu gantera pe braț', muscleGroup: 'Spate' },
+    { id: 'back_6', name: 'Ramat la cablu din șezut', muscleGroup: 'Spate' },
+    { id: 'back_7', name: 'Ramat T-Bar', muscleGroup: 'Spate' },
+    { id: 'back_8', name: 'Pull-over la cablu', muscleGroup: 'Spate' },
+    { id: 'back_9', name: 'Tracțiuni la helcometru pe un braț', muscleGroup: 'Spate' },
+    { id: 'back_10', name: 'Ramat la aparat', muscleGroup: 'Spate' },
 
-    // PICIOARE (Quads)
-    { id: 'legs_1', name: 'Genuflexiuni (Squat)', muscleGroup: 'Picioare' },
-    { id: 'legs_2', name: 'Front Squat', muscleGroup: 'Picioare' },
+    // PICIOARE (Cvadriceps)
+    { id: 'legs_1', name: 'Genuflexiuni cu bara (Back Squat)', muscleGroup: 'Picioare' },
+    { id: 'legs_2', name: 'Genuflexiuni cu bara în față', muscleGroup: 'Picioare' },
     { id: 'legs_3', name: 'Hack Squat', muscleGroup: 'Picioare' },
-    { id: 'legs_4', name: 'Leg Press', muscleGroup: 'Picioare' },
-    { id: 'legs_5', name: 'Extensii Cvadriceps', muscleGroup: 'Picioare' },
-    { id: 'legs_6', name: 'Bulgarian Split Squat', muscleGroup: 'Picioare' },
+    { id: 'legs_4', name: 'Presă pentru picioare (Leg Press)', muscleGroup: 'Picioare' },
+    { id: 'legs_5', name: 'Extensii cvadriceps la aparat', muscleGroup: 'Picioare' },
+    { id: 'legs_6', name: 'Genuflexiuni bulgărești', muscleGroup: 'Picioare' },
     { id: 'legs_7', name: 'Fandări (Lunges)', muscleGroup: 'Picioare' },
     { id: 'legs_8', name: 'Sissy Squat', muscleGroup: 'Picioare' },
 
-    // PICIOARE (Hams/Glutes)
-    { id: 'hams_1', name: 'RDL (Îndreptări Românești)', muscleGroup: 'Picioare' },
-    { id: 'hams_2', name: 'Seated Leg Curl', muscleGroup: 'Picioare' },
-    { id: 'hams_3', name: 'Lying Leg Curl', muscleGroup: 'Picioare' },
+    // PICIOARE (Femurali/Fesieri)
+    { id: 'hams_1', name: 'Îndreptări românești (RDL)', muscleGroup: 'Picioare' },
+    { id: 'hams_2', name: 'Flexii femurali din șezut', muscleGroup: 'Picioare' },
+    { id: 'hams_3', name: 'Flexii femurali din culcat', muscleGroup: 'Picioare' },
     { id: 'hams_4', name: 'Hip Thrust', muscleGroup: 'Picioare' },
     { id: 'hams_5', name: 'Glute Bridge', muscleGroup: 'Picioare' },
-    { id: 'hams_6', name: 'Kickback Cablu', muscleGroup: 'Picioare' },
-    { id: 'hams_7', name: 'Hyperextensii (Back Ext)', muscleGroup: 'Picioare' },
-    { id: 'hams_8', name: 'Sumo Deadlift', muscleGroup: 'Picioare' },
+    { id: 'hams_6', name: 'Kickback la cablu', muscleGroup: 'Picioare' },
+    { id: 'hams_7', name: 'Extensii lombare (Hyperextensions)', muscleGroup: 'Picioare' },
+    { id: 'hams_8', name: 'Îndreptări Sumo', muscleGroup: 'Picioare' },
 
     // UMERI
-    { id: 'delt_1', name: 'Military Press (Bară)', muscleGroup: 'Umeri' },
-    { id: 'delt_2', name: 'Shoulder Press (Galtere)', muscleGroup: 'Umeri' },
-    { id: 'delt_3', name: 'Machine Shoulder Press', muscleGroup: 'Umeri' },
-    { id: 'delt_4', name: 'Ridicări Laterale (Galtere)', muscleGroup: 'Umeri' },
-    { id: 'delt_5', name: 'Ridicări Laterale (Cablu)', muscleGroup: 'Umeri' },
-    { id: 'delt_6', name: 'Ridicări Frontale', muscleGroup: 'Umeri' },
+    { id: 'delt_1', name: 'Presă militară cu bara', muscleGroup: 'Umeri' },
+    { id: 'delt_2', name: 'Împins cu gantere pentru umeri', muscleGroup: 'Umeri' },
+    { id: 'delt_3', name: 'Împins la aparat pentru umeri', muscleGroup: 'Umeri' },
+    { id: 'delt_4', name: 'Ridicări laterale cu gantere', muscleGroup: 'Umeri' },
+    { id: 'delt_5', name: 'Ridicări laterale la cablu', muscleGroup: 'Umeri' },
+    { id: 'delt_6', name: 'Ridicări frontale', muscleGroup: 'Umeri' },
     { id: 'delt_7', name: 'Face Pull', muscleGroup: 'Umeri' },
-    { id: 'delt_8', name: 'Reverse Pec Deck (Rear Delt)', muscleGroup: 'Umeri' },
-    { id: 'delt_9', name: 'Rear Delt Fly (Galtere)', muscleGroup: 'Umeri' },
-    { id: 'delt_10', name: 'Upright Row', muscleGroup: 'Umeri' },
+    { id: 'delt_8', name: 'Fluturări deltoid posterior la aparat', muscleGroup: 'Umeri' },
+    { id: 'delt_9', name: 'Fluturări deltoid posterior cu gantere', muscleGroup: 'Umeri' },
+    { id: 'delt_10', name: 'Ramat vertical (Upright Row)', muscleGroup: 'Umeri' },
 
-    // BRATE
-    { id: 'arm_1', name: 'Biceps Curl (Bară)', muscleGroup: 'Brațe' },
-    { id: 'arm_2', name: 'Biceps Curl (Galtere)', muscleGroup: 'Brațe' },
-    { id: 'arm_3', name: 'Hammer Curl', muscleGroup: 'Brațe' },
-    { id: 'arm_4', name: 'Preacher Curl', muscleGroup: 'Brațe' },
-    { id: 'arm_5', name: 'Bayesian Curl (Cablu)', muscleGroup: 'Brațe' },
-    { id: 'arm_6', name: 'Triceps Pushdown (Coardă)', muscleGroup: 'Brațe' },
-    { id: 'arm_7', name: 'Triceps Pushdown (Bară)', muscleGroup: 'Brațe' },
-    { id: 'arm_8', name: 'Skullcrushers', muscleGroup: 'Brațe' },
-    { id: 'arm_9', name: 'Overhead Extension (Ganteră)', muscleGroup: 'Brațe' },
-    { id: 'arm_10', name: 'Dips (Bancă/Paralele)', muscleGroup: 'Brațe' },
+    // BRAȚE
+    { id: 'arm_1', name: 'Flexii biceps cu bara Z', muscleGroup: 'Brațe' },
+    { id: 'arm_2', name: 'Flexii biceps cu gantere', muscleGroup: 'Brațe' },
+    { id: 'arm_3', name: 'Flexii ciocan (Hammer Curls)', muscleGroup: 'Brațe' },
+    { id: 'arm_4', name: 'Flexii la banca Scott', muscleGroup: 'Brațe' },
+    { id: 'arm_5', name: 'Flexii Bayesian la cablu', muscleGroup: 'Brațe' },
+    { id: 'arm_6', name: 'Extensii triceps la cablu (sfoară)', muscleGroup: 'Brațe' },
+    { id: 'arm_7', name: 'Extensii triceps la cablu (bara)', muscleGroup: 'Brațe' },
+    { id: 'arm_8', name: 'Skullcrushers (Extensii franceze)', muscleGroup: 'Brațe' },
+    { id: 'arm_9', name: 'Extensii triceps cu gantera deasupra capului', muscleGroup: 'Brațe' },
+    { id: 'arm_10', name: 'Flotări la paralele pentru triceps', muscleGroup: 'Brațe' },
 
-    // ABS/CALVES/OTHER
-    { id: 'other_1', name: 'Standing Calf Raise', muscleGroup: 'Altele' },
-    { id: 'other_2', name: 'Seated Calf Raise', muscleGroup: 'Altele' },
-    { id: 'other_3', name: 'Leg Raise (Abdomene)', muscleGroup: 'Altele' },
-    { id: 'other_4', name: 'Crunch (Abdomene)', muscleGroup: 'Altele' },
-    { id: 'other_5', name: 'Plank', muscleGroup: 'Altele' },
-    { id: 'other_6', name: 'Shrugs (Trapez)', muscleGroup: 'Altele' },
+    // ABDOMEN/GAMBE/ALTELE
+    { id: 'other_1', name: 'Ridicări pe vârfuri din picioare', muscleGroup: 'Altele' },
+    { id: 'other_2', name: 'Ridicări pe vârfuri din șezut', muscleGroup: 'Altele' },
+    { id: 'other_3', name: 'Ridicări de picioare (Abdomen)', muscleGroup: 'Altele' },
+    { id: 'other_4', name: 'Crunch la cablu/sol', muscleGroup: 'Altele' },
+    { id: 'other_5', name: 'Plank (Planșă)', muscleGroup: 'Altele' },
+    { id: 'other_6', name: 'Ridicări de umeri (Trapez)', muscleGroup: 'Altele' },
 ];
 
 export interface ExerciseContext {
@@ -152,279 +152,111 @@ export interface ExerciseContext {
 
 export const EXERCISE_CONTEXT: Record<string, ExerciseContext> = {
   // ZIUA 1
-  'd1_1': { why: 'Izolare pură a deltoidului lateral fără implicarea tricepsului. Pre-obosește umerii pentru presă.', scheme: 'Un set "all-out" pentru activare maximă, urmat de back-off pentru volum metabolic.', cue: 'Ridică coatele, nu palmele. Imaginează-ți că torni apă dintr-o carafă.', rest: 90 },
-  'd1_2': { why: 'Stabilitatea mașinii permite recrutarea maximă a pieptului superior (clavicular) în siguranță.', scheme: 'Top set greu pentru tensiune mecanică. Back-off pentru a epuiza fibrele rămase.', cue: 'Ține omoplații lipiți de spătar. Împinge coatele spre interior la vârf.', rest: 180 },
-  'd1_3': { why: 'Mișcare compusă clasică pentru dezvoltarea generală a pieptului și a forței de împingere.', scheme: 'Volum moderat, nu eșec total, pentru a acumula oboseală fără risc major de accidentare.', cue: 'Controlează coborârea. Nu lăsa bara să cadă pe piept.', rest: 120 },
-  'd1_4': { why: 'Întindere maximă a pectoralului sub tensiune constantă, imposibil de obținut cu gantere.', scheme: 'Reps multe pentru a pompa sânge în mușchi și a întinde fascia.', cue: 'Concentrază-te pe întindere, nu pe cât de mult apropii mânerele.', rest: 60 },
-  'd1_5': { why: 'Izolare strictă a tricepsului, capul lateral și medial.', scheme: 'Top set greu pentru forță, back-off pentru volum.', cue: 'Ține coatele fixe lângă corp. Doar antebrațul se mișcă.', rest: 90 },
-  'd1_6': { why: 'Lucrează capul lung al tricepsului prin poziția brațului deasupra capului.', scheme: 'Pompaj și întindere. Greutate moderată.', cue: 'Lasă greutatea să te întindă bine în spate.', rest: 60 },
+  'd1_1': { why: 'Izolare pură a deltoidului lateral fără implicarea tricepsului. Pregătește articulația umărului.', scheme: 'Un set intens pentru activare, urmat de seturi de volum pentru stres metabolic.', cue: 'Ridică coatele, nu palmele. Imaginează-ți că torni apă dintr-o carafă.', rest: 90 },
+  'd1_2': { why: 'Stabilitatea mașinii permite recrutarea maximă a pieptului superior în deplină siguranță.', scheme: 'Top set greu pentru tensiune mecanică. Back-off pentru a epuiza complet fibrele musculare.', cue: 'Ține omoplații lipiți de spătar. Împinge coatele spre interior la finalul mișcării.', rest: 180 },
+  'd1_3': { why: 'Exercițiu compus de bază pentru dezvoltarea masei pectorale și a forței de împingere.', scheme: 'Volum moderat, evitând eșecul total pentru a acumula oboseală utilă fără risc de accidentare.', cue: 'Controlează coborârea. Nu lăsa bara să ricoșeze din piept.', rest: 120 },
+  'd1_4': { why: 'Oferă o întindere maximă a pectoralului sub tensiune constantă, superioară ganterelor.', scheme: 'Repetări numeroase pentru a pompa sânge în mușchi și a întinde fascia musculară.', cue: 'Concentrează-te pe faza de întindere, nu pe cât de mult apropii mânerele.', rest: 60 },
+  'd1_5': { why: 'Izolare strictă a tricepsului, vizând capetele lateral și medial.', scheme: 'Top set pentru forță, urmat de un set de volum pentru epuizare.', cue: 'Ține coatele fixe lângă corp. Doar antebrațul trebuie să se miște.', rest: 90 },
+  'd1_6': { why: 'Vizează capul lung al tricepsului prin poziția brațului deasupra capului.', scheme: 'Pompaj și întindere profundă. Greutate moderată.', cue: 'Lasă greutatea să coboare controlat în spatele capului.', rest: 60 },
   
   // ZIUA 2
-  'd2_1': { why: 'Regele exercițiilor pentru picioare. Stimul sistemic masiv.', scheme: 'Ramp-up extensiv necesar. Top set-ul este brutal dar eficient.', cue: 'Genunchii merg peste vârfuri. Spatele drept.', rest: 180 },
-  'd2_2': { why: 'Corectează asimetriile și lucrează stabilizatorii.', scheme: 'Reps mai multe, greutate moderată pentru a proteja genunchii.', cue: 'Lasă genunchiul din spate să atingă ușor solul.', rest: 90 },
-  'd2_3': { why: 'Singurul exercițiu care lucrează rectus femoris în scurtare completă.', scheme: 'Seturi până la durere. Pompaj maxim.', cue: 'Extensie completă, pauză 1 secundă sus.', rest: 60 },
-  'd2_4': { why: 'Adductorii mari contribuie masiv la dimensiunea coapsei.', scheme: 'Control strict, fără balans.', cue: 'Strânge genunchii cu forță.', rest: 60 },
-  'd2_5': { why: 'Gastrocnemius lucrează doar cu genunchiul drept.', scheme: 'Pauză în partea de jos pentru a elimina reflexul de întindere.', cue: 'Ridică-te pe degetul mare.', rest: 60 },
-  'd2_6': { why: 'Solearul lucrează cu genunchiul îndoit.', scheme: 'Reps multe, arsură maximă.', cue: 'Mișcare completă.', rest: 45 },
+  'd2_1': { why: 'Exercițiul fundamental pentru picioare. Produce un stimul sistemic masiv.', scheme: 'Necesită mai multe seturi de încălzire (Ramp-up). Top set-ul este punctul culminant.', cue: 'Genunchii urmăresc direcția vârfurilor. Menține coloana neutră.', rest: 180 },
+  'd2_2': { why: 'Corectează asimetriile musculare și lucrează mușchii stabilizatori.', scheme: 'Repetări mai multe, greutate moderată pentru protecția genunchilor.', cue: 'Coboară până când genunchiul din spate atinge aproape solul.', rest: 90 },
+  'd2_3': { why: 'Singurul exercițiu care izolează cvadricepsul în poziție de scurtare completă.', scheme: 'Seturi până la eșec tehnic. Arsură musculară maximă.', cue: 'Extensie completă a picioarelor, pauză o secundă în punctul de vârf.', rest: 60 },
+  'd2_4': { why: 'Adductorii contribuie semnificativ la volumul total al coapsei.', scheme: 'Control strict, fără mișcări bruște sau balans.', cue: 'Strânge genunchii controlat și menține tensiunea.', rest: 60 },
+  'd2_5': { why: 'Gastrocnemius este activat optim cu genunchiul perfect întins.', scheme: 'Pauză în punctul de jos pentru a elimina forța elastică a tendonului lui Ahile.', cue: 'Împinge puternic de pe degetul mare.', rest: 60 },
+  'd2_6': { why: 'Solearul este mușchiul principal vizat când genunchiul este flectat.', scheme: 'Repetări numeroase, arsură maximă.', cue: 'Mișcare completă pe toată raza de execuție.', rest: 45 },
 
   // ZIUA 3
-  'd3_1': { why: 'Lățimea spatelui. Tracțiunile recrutează fibrele verticale.', scheme: 'Top set greu. Dacă nu poți face tracțiuni, folosește Lat Pulldown.', cue: 'Trage cu coatele spre șolduri.', rest: 120 },
-  'd3_2': { why: 'Grosimea spatelui. Ramatul permite greutăți mari.', scheme: 'Top set pentru forță.', cue: 'Ține pieptul sus.', rest: 120 },
-  'd3_3': { why: 'Izolare și contracție de vârf.', scheme: 'Focus pe contracție.', cue: 'Strânge omoplații la final.', rest: 90 },
-  'd3_4': { why: 'Deltoidul posterior este adesea neglijat dar esențial pentru aspectul 3D.', scheme: 'Volum foarte mare, greutate mică.', cue: 'Du mâinile în lateral și spate.', rest: 45 },
-  'd3_5': { why: 'Preacher curl elimină balansul și izolează bicepsul.', scheme: 'Control total.', cue: 'Nu întinde complet brațul dacă simți disconfort.', rest: 90 },
-  'd3_6': { why: 'Volum suplimentar pentru piept fără a obosi sistemul nervos.', scheme: 'Ușor și controlat.', cue: 'Focus pe mușchi, nu pe mișcare.', rest: 60 },
+  'd3_1': { why: 'Dezvoltă lățimea spatelui prin activarea fibrelor verticale ale dorsalilor.', scheme: 'Top set greu. Dacă nu poți face tracțiuni libere, folosește helcometrul.', cue: 'Imaginează-ți că tragi coatele spre buzunarele de la spate.', rest: 120 },
+  'd3_2': { why: 'Dezvoltă grosimea spatelui. Permite manipularea unor greutăți mari.', scheme: 'Top set pentru tensiune mecanică brută.', cue: 'Menține pieptul sus și spatele drept.', rest: 120 },
+  'd3_3': { why: 'Oferă o izolare excelentă și o contracție de vârf superioară.', scheme: 'Accent pe contracția musculară și control.', cue: 'Strânge omoplații puternic la finalul mișcării.', rest: 90 },
+  'd3_4': { why: 'Deltoidul posterior oferă aspectul 3D umerilor și este adesea neglijat.', scheme: 'Volum mare, greutate relativ mică.', cue: 'Du brațele în lateral și în spate, nu doar în sus.', rest: 45 },
+  'd3_5': { why: 'Elimină balansul și izolează bicepsul într-o poziție stabilă.', scheme: 'Control total pe faza negativă.', cue: 'Nu extinde complet brațul dacă simți tensiune neplăcută în tendon.', rest: 90 },
+  'd3_6': { why: 'Volum suplimentar pentru piept fără a supraîncărca sistemul nervos.', scheme: 'Greutate mică, focus pe conexiunea minte-mușchi.', cue: 'Concentrează-te pe contracția pectoralului, nu pe mișcarea brațelor.', rest: 60 },
 
   // ZIUA 4
-  'd4_1': { why: 'Lanțul posterior. Construiește femurali și fesieri puternici.', scheme: 'Greutate mare, reps puține.', cue: 'Împinge bazinul în spate. Genunchii ușor flexați.', rest: 180 },
-  'd4_2': { why: 'Izolare femurali în poziție alungită.', scheme: 'Control pe negativ.', cue: 'Trage călcâiele sub scaun.', rest: 90 },
-  'd4_3': { why: 'Variație pentru capul scurt al bicepsului femural.', scheme: 'Pompaj.', cue: 'Bazinul lipit de bancă.', rest: 60 },
-  'd4_4': { why: 'Cel mai bun exercițiu pentru fesieri.', scheme: 'Greutate mare, extensie completă de șold.', cue: 'Privirea înainte, împinge din călcâie.', rest: 120 },
-  'd4_5': { why: 'Finisher pentru fesieri.', scheme: 'Reps multe.', cue: 'Abducție controlată.', rest: 60 },
-  'd4_6': { why: 'Decompresie și volum pentru zona lombară/fesieri.', scheme: 'Controlat.', cue: 'Nu hiperextinde spatele excesiv.', rest: 60 },
-  'd4_7': { why: 'Volum pentru gambe.', scheme: 'Execuție strictă.', cue: 'Pauză jos.', rest: 60 },
+  'd4_1': { why: 'Vizează întreg lanțul posterior (femurali, fesieri, erectori spinali).', scheme: 'Greutate mare, repetări puține spre moderate.', cue: 'Împinge bazinul cât mai mult în spate. Păstrează bara aproape de picioare.', rest: 180 },
+  'd4_2': { why: 'Izolare excelentă a femuralilor în poziție așezată.', scheme: 'Control strict pe faza de revenire (negativă).', cue: 'Trage călcâiele sub scaun cât mai mult.', rest: 90 },
+  'd4_3': { why: 'Variație care pune accent pe capătul scurt al bicepsului femural.', scheme: 'Pompaj și densitate musculară.', cue: 'Menține bazinul lipit de bancă pe tot parcursul setului.', rest: 60 },
+  'd4_4': { why: 'Recunoscut drept cel mai eficient exercițiu pentru dezvoltarea fesierilor.', scheme: 'Greutate mare, accent pe extensia completă a șoldului.', cue: 'Privirea înainte, împinge cu forță din călcâie.', rest: 120 },
+  'd4_5': { why: 'Exercițiu de finisare pentru rotunjimea fesierilor.', scheme: 'Repetări multe pentru stres metabolic.', cue: 'Execuție controlată, fără grabă.', rest: 60 },
+  'd4_6': { why: 'Decompresie și volum suplimentar pentru zona lombară și fesieri.', scheme: 'Controlat, fără mișcări bruște la final.', cue: 'Nu hiperextinde coloana excesiv în punctul de vârf.', rest: 60 },
+  'd4_7': { why: 'Volum adițional pentru gambe.', scheme: 'Execuție strictă și controlată.', cue: 'Pauză în punctul de întindere maximă.', rest: 60 },
 
   // ZIUA 5
-  'd5_1': { why: 'Biceps strict.', scheme: 'Greutate moderată.', cue: 'Coatele în fața corpului.', rest: 90 },
-  'd5_2': { why: 'Biceps din poziție alungită.', scheme: 'Întindere maximă.', cue: 'Lasă brațul să atârne complet.', rest: 60 },
-  'd5_3': { why: 'Brahial și antebraț. Lățește brațul din față.', scheme: 'Prindere neutră.', cue: 'Strânge gantera tare.', rest: 60 },
-  'd5_4': { why: 'Volum triceps.', scheme: 'Pompaj.', cue: 'Extensie completă.', rest: 60 },
-  'd5_5': { why: 'Capul lung triceps.', scheme: 'Întindere.', cue: 'Coatele sus.', rest: 60 },
-  'd5_6': { why: 'Finisher umeri.', scheme: 'Arsură metabolică.', cue: 'Coatele sus.', rest: 45 },
+  'd5_1': { why: 'Exercițiu de bază pentru volumul bicepsului.', scheme: 'Greutate moderată, fără balans din trunchi.', cue: 'Ține coatele fixe pe lângă corp.', rest: 90 },
+  'd5_2': { why: 'Pune bicepsul într-o poziție de întindere maximă (pre-stretch).', scheme: 'Accent pe faza excentrică (coborâre).', cue: 'Lasă brațele să atârne complet vertical în spate.', rest: 60 },
+  'd5_3': { why: 'Lucrează brahialul și antebrațul, oferind lățime brațului.', scheme: 'Priză neutră (palmele față în față).', cue: 'Strânge gantera cu putere pentru activarea antebrațului.', rest: 60 },
+  'd5_4': { why: 'Volum suplimentar pentru triceps.', scheme: 'Pompaj și arsură musculară.', cue: 'Extensie completă a brațului și depărtarea sforii la final.', rest: 60 },
+  'd5_5': { why: 'Vizează capul lung al tricepsului printr-o întindere profundă.', scheme: 'Accent pe calitatea execuției.', cue: 'Ține coatele cât mai aproape de cap.', rest: 60 },
+  'd5_6': { why: 'Finisare pentru umeri, vizând aspectul lat al acestora.', scheme: 'Epuizare metabolică.', cue: 'Condu mișcarea cu coatele, nu cu pumnii.', rest: 45 },
 };
 
 export const EDUCATION_CONTENT: EducationalSection[] = [
-  // --- A) FOUNDATION ---
+  // --- A) FUNDAMENTALE ---
   { 
     id: 's1', 
     category: 'FOUNDATION', 
-    title: '1) Ramp-up', 
+    title: '1) Ramp-up (Încălzirea)', 
     type: 'list', 
     content: [
-        'Seturile de ramp-up au rolul exclusiv de pregătire neuromusculară.', 
-        'Nu se execută până la eșec. RIR-ul trebuie să fie mare (>3).', 
-        'Nu se contorizează în volumul de antrenament.', 
-        'Scopul este de a ajunge la greutatea de lucru în siguranță.'
+        'Seturile de ramp-up sunt folosite exclusiv pentru pregătirea sistemului nervos și a articulațiilor.', 
+        'NU se execută până la eșec. Trebuie să simți greutatea, dar să nu obosești mușchiul.', 
+        'Nu sunt contorizate în volumul total de lucru (seturi efective).', 
+        'Scopul este să ajungi la greutatea de "Top Set" în siguranță deplină.'
     ] 
   },
   { 
     id: 's2', 
     category: 'FOUNDATION', 
-    title: '2) Top Set', 
+    title: '2) Top Set (Setul Principal)', 
     type: 'list', 
     content: [
-        'Este cel mai important set al antrenamentului.',
-        'Obiectiv: Performanță maximă cu tehnică perfectă.',
-        'RIR țintă: 0-1 (foarte aproape de eșec sau eșec tehnic).',
-        'Dacă progresezi la Top Set, progresezi în masă musculară.'
+        'Este cel mai important set al întregului antrenament.',
+        'Obiectiv: Performanță maximă cu o tehnică de execuție impecabilă.',
+        'Intensitate țintă: RIR 0 sau 1 (eșec tehnic sau o repetare înainte).',
+        'Dacă progresezi constant la Top Set (greutate sau repetări), vei construi masă musculară.'
     ] 
   },
   { 
     id: 's3', 
     category: 'FOUNDATION', 
-    title: '3) Back-off', 
+    title: '3) Back-off (Setul de Volum)', 
     type: 'list', 
     content: [
-        'Rol: Acumulare de volum suplimentar cu oboseală redusă.',
-        'Greutatea se scade cu ~10-20% față de Top Set.',
-        'Se execută tot aproape de eșec (RIR 0-1).',
-        'Completează stimulul fără a distruge recuperarea.'
+        'Rol: Acumularea de volum suplimentar necesar hipertrofiei, cu o oboseală sistemică mai mică.',
+        'Greutatea se reduce de obicei cu 10-20% față de Top Set.',
+        'Se execută tot la intensitate mare (RIR 0-1).',
+        'Completează stimulul oferit de Top Set fără a depăși capacitatea de recuperare.'
     ] 
   },
 
-  // --- B) EFFORT ---
+  // --- B) INTENSITATEA ---
   { 
     id: 's4', 
     category: 'EFFORT', 
-    title: '4) Ce este RIR?', 
+    title: '4) Ce înseamnă RIR?', 
     type: 'list', 
     content: [
         'RIR = Repetitions In Reserve (Repetări în Rezervă).',
-        'RIR 0 = Nu mai poți face nicio repetare corectă.',
-        'RIR 1 = Mai poți face exact 1 repetare corectă.',
-        'RIR 2 = Mai poți face exact 2 repetări corecte.',
-        'Hipertrofia optimă apare la RIR 0-3.'
-    ] 
-  },
-  { 
-    id: 's11', 
-    category: 'EFFORT', 
-    title: '11) Interpretarea corectă a RIR', 
-    type: 'list', 
-    content: [
-        'Mulți oameni subestimează RIR-ul (cred că sunt la eșec, dar mai au 5 reps).',
-        'Când mișcarea încetinește involuntar, te apropii de eșec.',
-        'Adevăratul eșec înseamnă că viteza devine zero în ciuda efortului maxim.'
-    ] 
-  },
-  { 
-    id: 's14', 
-    category: 'EFFORT', 
-    title: '14) Eșec tehnic vs eșec total', 
-    type: 'list', 
-    content: [
-        'Eșec tehnic = nu mai poți face o repetare CORECTĂ.',
-        'Eșec total = nu mai poți mișca greutatea deloc.',
-        'Programul folosește eșec tehnic (RIR 0).',
-        'NU eșec total (care crește riscul de accidentare).'
+        'RIR 0 = Nu mai poți executa nicio repetare corectă suplimentară.',
+        'RIR 1 = Te oprești simțind că ai mai fi putut face exact o repetare corectă.',
+        'RIR 2 = Te oprești simțind că ai mai fi putut face exact două repetări corecte.',
+        'Studiile arată că hipertrofia optimă are loc în zona RIR 0-3.'
     ] 
   },
 
-  // --- C) CLARITY ---
-  { 
-    id: 's5', 
-    category: 'CLARITY', 
-    title: '5) De ce nu toate au Top Set?', 
-    type: 'list', 
-    content: [
-        'Exercițiile de izolare (ex: fluturări, laterale) pot fi traumatizante articular cu greutăți mari.',
-        'La acestea, prioritizăm "metabolic stress" și volumul.',
-        'Nu este necesar un "Top Set" greu de 5-8 repetări la fiecare exercițiu.'
-    ] 
-  },
-  { 
-    id: 's13', 
-    category: 'CLARITY', 
-    title: '13) Set efectiv vs set logat', 
-    type: 'list', 
-    content: [
-        'Un set logat ≠ automat un set eficient.',
-        'Un set devine eficient doar dacă este suficient de aproape de eșec (RIR ≤3) și are execuție corectă.',
-        'Ramp-up = logat, dar NU eficient.',
-        'Back-off = eficient, dar secundar.',
-        'Top set = eficient principal.'
-    ] 
-  },
-  { 
-    id: 's15', 
-    category: 'CLARITY', 
-    title: '15) Pomparea NU este criteriu de progres', 
-    type: 'list', 
-    content: [
-        'Pomparea este un efect secundar al afluxului de sânge.',
-        'Nu corelează direct cu hipertrofia pe termen lung.',
-        'Progresul este evaluat prin performanța Top Set-ului și consistență în timp.'
-    ] 
-  },
-  { 
-    id: 's16', 
-    category: 'CLARITY', 
-    title: '16) De ce nu urmărim volumul total ca obiectiv', 
-    type: 'list', 
-    content: [
-        'Volumul este o unealtă, nu un scop.',
-        'Mai mult volum ≠ progres mai bun.',
-        'Top Set-ul este criteriul principal.',
-        'Volumul se ajustează în funcție de performanță.'
-    ] 
-  },
-
-  // --- D) STRUCTURE ---
-  { 
-    id: 's6', 
-    category: 'STRUCTURE', 
-    title: '6) Volum & Frecvență', 
-    type: 'list', 
-    content: [
-        'Frecvența optimă este de obicei 2x pe săptămână per grupă musculară.',
-        'Volumul este moderat spre mic, dar intensitatea este maximă.',
-        'Mai mult nu înseamnă mai bine. Mai bine înseamnă mai bine.'
-    ] 
-  },
-  { 
-    id: 's9', 
-    category: 'STRUCTURE', 
-    title: '9) Volum suficient, nu maxim', 
-    type: 'list', 
-    content: [
-        'Nu căutăm volumul maxim recuperabil (MRV), ci volumul minim eficient care produce progres.',
-        'Orice set peste necesar este doar oboseală inutilă (Junk Volume).',
-        'Dacă progresezi la Top Set, volumul este suficient.'
-    ] 
-  },
-
-  // --- E) RECOVERY ---
-  { 
-    id: 's7', 
-    category: 'RECOVERY', 
-    title: '7) Autoreglare', 
-    type: 'list', 
-    content: [
-        'Ascultă-ți corpul. Dacă ești obosit, scade volumul (numărul de seturi de back-off).',
-        'Dacă te simți puternic, atacă Top Set-ul cu încredere.',
-        'Nu forța progresul dacă tehnica se degradează.'
-    ] 
-  },
+  // --- E) RECUPERAREA ---
   { 
     id: 's8', 
     category: 'RECOVERY', 
-    title: '8) Deload', 
+    title: '8) Săptămâna de Deload', 
     type: 'list', 
     content: [
-        'O săptămână ușoară pentru a permite recuperarea completă.',
-        'Scade greutățile cu 50% sau volumul cu 50%.',
-        'Fă un deload la fiecare 6-8 săptămâni sau când performanța stagnează/scade.'
-    ] 
-  },
-  { 
-    id: 's12', 
-    category: 'RECOVERY', 
-    title: '12) Deload – când și de ce', 
-    type: 'list', 
-    content: [
-        'Semne că ai nevoie de Deload: insomnii, iritabilitate, dureri articulare, stagnare 2-3 sesiuni consecutive.',
-        'Nu aștepta accidentarea. Planifică recuperarea.'
-    ] 
-  },
-
-  // --- F) ADVANCED ---
-  { 
-    id: 's10', 
-    category: 'ADVANCED', 
-    title: '10) Individualizarea răspunsului', 
-    type: 'list', 
-    content: [
-        'Unii sportivi tolerează mai mult volum, alții mai puțin.',
-        'Dacă ești mereu dureros (DOMS excesiv), scade volumul.',
-        'Dacă nu ai pompare și nu simți mușchiul, verifică execuția.'
-    ] 
-  },
-  { 
-    id: 's17', 
-    category: 'ADVANCED', 
-    title: '17) Ce faci când NU progresezi', 
-    type: 'list', 
-    content: [
-        'Lipsa progresului pe termen scurt este normală.',
-        'Nu se schimbă programul imediat. Nu se adaugă exerciții.',
-        'Se analizează: oboseala, execuția, recuperarea.',
-        'Progresul la avansați este lent, dar stabil.'
-    ] 
-  },
-  { 
-    id: 's18', 
-    category: 'ADVANCED', 
-    title: '18) Progresul nu este liniar', 
-    type: 'list', 
-    content: [
-        'Vor exista săptămâni neutre și mici regresii.',
-        'Important este trendul pe termen mediu.',
-        'De aceea aplicația compară ultimele două Top Set-uri, nu fiecare sesiune izolată.'
-    ] 
-  },
-
-  // --- G) PHILOSOPHY ---
-  { 
-    id: 's19', 
-    category: 'PHILOSOPHY', 
-    title: '19) Filosofia aplicației', 
-    type: 'list', 
-    content: [
-        'Calitatea > cantitatea.',
-        'Top Set-ul ghidează deciziile.',
-        'Volumul susține, nu conduce.',
-        'Recuperarea face parte din progres.',
-        'Controlul rămâne la sportiv.'
+        'O perioadă de odihnă activă pentru a permite recuperarea completă a sistemului nervos și a țesuturilor moi.',
+        'Se recomandă reducerea greutăților cu 30-50% sau a volumului (numărul de seturi) cu 50%.',
+        'Planifică un deload la fiecare 6-10 săptămâni sau imediat ce observi o stagnare a forței pe mai multe sesiuni.'
     ] 
   }
 ];

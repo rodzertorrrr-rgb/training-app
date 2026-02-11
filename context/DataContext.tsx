@@ -30,7 +30,6 @@ interface DataContextType {
   getAllExercises: () => MasterExercise[];
 }
 
-// Simple ID generator
 const generateId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -45,7 +44,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const PREFIX = 'rdz_'; 
 
-  // Load data on user change
   useEffect(() => {
     if (user) {
       const storedSessions = localStorage.getItem(`${PREFIX}sessions_${user.id}`);
@@ -67,7 +65,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
-  // Persist draft on change
   useEffect(() => {
     if (user) {
       if (draftSession) {
@@ -130,20 +127,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getLastSessionExerciseData = (exerciseId: string) => {
-      // Find the most recent COMPLETED session that contains this exercise
       const relevantSession = sessions.find(s => 
           s.status === 'COMPLETED' && 
           s.exercises.some(e => e.exerciseId === exerciseId)
       );
-
       if (!relevantSession) return null;
-
       const exercise = relevantSession.exercises.find(e => e.exerciseId === exerciseId);
       if (!exercise) return null;
-
       const topSet = exercise.sets.find(s => s.type === 'TOP_SET');
       if (!topSet || topSet.weight === '' || topSet.reps === '') return null;
-
       return {
           weight: Number(topSet.weight),
           reps: Number(topSet.reps),
@@ -155,7 +147,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     if (draftSession) return; 
 
-    // Search in both Default and Custom programs
     const allPrograms = [...TRAINING_PROGRAM, ...customPrograms];
     const programDay = allPrograms.find(d => d.id === dayId);
     
@@ -163,28 +154,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     logInternalEvent('session_started', { dayId });
 
-    // Initialize exercises from template
     const newExercises: ExerciseLog[] = programDay.exercises.map(ex => {
       const initialSets: SetLog[] = [];
-      
-      // Ramp-up sets
       for (let i = 0; i < ex.defaultRampUpSets; i++) {
         initialSets.push({ id: generateId(), type: 'RAMP_UP', weight: '', reps: '', rir: '', isCompleted: false });
       }
-      
-      // Top Set (Only if hasTopSet is true)
       if (ex.hasTopSet) {
         initialSets.push({ id: generateId(), type: 'TOP_SET', weight: '', reps: '', rir: '', isCompleted: false });
       }
-
-      // Back-off sets
       for (let i = 0; i < ex.defaultBackOffSets; i++) {
         initialSets.push({ id: generateId(), type: 'BACK_OFF', weight: '', reps: '', rir: '', isCompleted: false });
       }
 
-      // Try to find last settings note for this exercise
       let lastSettings = '';
-      const lastSessionWithEx = sessions.find(s => s.exercises.some(e => e.exerciseId === ex.id && e.settingsNote));
+      const lastSessionWithEx = sessions.find(s => s.exercises.some(e => e.exerciseId === ex.id && e.settingsNote && e.settingsNote.trim() !== ''));
       if (lastSessionWithEx) {
           const prevEx = lastSessionWithEx.exercises.find(e => e.exerciseId === ex.id);
           if (prevEx?.settingsNote) lastSettings = prevEx.settingsNote;
@@ -195,7 +178,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         exerciseId: ex.id,
         name: ex.name,
         sets: initialSets,
-        settingsNote: lastSettings
+        settingsNote: lastSettings,
+        // Pass custom context if this is a custom program exercise
+        customContext: {
+            why: ex.why,
+            scheme: ex.scheme,
+            cue: ex.cue,
+            rest: ex.rest
+        }
       };
     });
 
@@ -218,47 +208,32 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateExerciseNote = (exerciseId: string, note: string) => {
       if (!draftSession) return;
-      const updatedExercises = draftSession.exercises.map(ex => {
-          if (ex.exerciseId === exerciseId) {
-              return { ...ex, settingsNote: note };
-          }
-          return ex;
+      setDraftSession(prev => {
+          if (!prev) return null;
+          return {
+              ...prev,
+              exercises: prev.exercises.map(ex => 
+                  ex.exerciseId === exerciseId ? { ...ex, settingsNote: note } : ex
+              )
+          };
       });
-      updateDraft({ ...draftSession, exercises: updatedExercises });
   };
 
   const saveSession = () => {
     if (!user || !draftSession) return;
-    
-    // Data Cleaning
     const cleanExercises = draftSession.exercises.map(ex => ({
         ...ex,
-        sets: ex.sets.filter(s => 
-            s.weight !== '' && 
-            s.reps !== '' && 
-            Number(s.weight) > 0 && 
-            Number(s.reps) > 0
-        )
-    })).filter(ex => ex.sets.length > 0);
-
-    const completedSession: WorkoutSession = {
-      ...draftSession,
-      status: 'COMPLETED',
-      completedAt: Date.now(),
-      exercises: cleanExercises
-    };
-
-    const newSessions = [completedSession, ...sessions]; // Newest first
+        sets: ex.sets.filter(s => s.weight !== '' && s.reps !== '' && Number(s.weight) > 0 && Number(s.reps) > 0)
+    })).filter(ex => ex.sets.length > 0 || (ex.settingsNote && ex.settingsNote.trim() !== ''));
+    const completedSession: WorkoutSession = { ...draftSession, status: 'COMPLETED', completedAt: Date.now(), exercises: cleanExercises };
+    const newSessions = [completedSession, ...sessions];
     setSessions(newSessions);
     localStorage.setItem(`${PREFIX}sessions_${user.id}`, JSON.stringify(newSessions));
-    
     setDraftSession(null);
-    logInternalEvent('session_saved', { sessionId: completedSession.id, exerciseCount: cleanExercises.length });
   };
 
   const discardSession = () => {
     if (!user) return;
-    logInternalEvent('session_discarded');
     setDraftSession(null);
   };
 
@@ -267,23 +242,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const newSessions = sessions.filter(s => s.id !== sessionId);
     setSessions(newSessions);
     localStorage.setItem(`${PREFIX}sessions_${user.id}`, JSON.stringify(newSessions));
-    logInternalEvent('session_deleted', { sessionId });
   };
 
   const integrityCheck = async (): Promise<string[]> => {
     if (!user) return [];
     const report: string[] = [];
-    
     const storedDraft = localStorage.getItem(`${PREFIX}draft_${user.id}`);
     if (storedDraft && !draftSession) {
       report.push("Draft orfan reîncărcat.");
       setDraftSession(JSON.parse(storedDraft));
     }
-
-    if (report.length === 0) {
-      report.push("Sistem optim. Nicio eroare.");
-    }
-
+    if (report.length === 0) report.push("Sistem optim. Nicio eroare.");
     return report;
   };
 
@@ -296,25 +265,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <DataContext.Provider value={{ 
-      sessions, 
-      draftSession, 
-      startSession, 
-      updateDraft, 
-      saveSession, 
-      discardSession, 
-      deleteSession,
-      logInternalEvent,
-      integrityCheck,
-      advancedMode,
-      toggleAdvancedMode,
-      getLastSessionExerciseData,
-      updateExerciseNote,
-      customPrograms,
-      saveCustomProgram,
-      deleteCustomProgram,
-      customExercises,
-      addCustomExercise,
-      getAllExercises
+      sessions, draftSession, startSession, updateDraft, saveSession, discardSession, deleteSession, logInternalEvent, integrityCheck, advancedMode, toggleAdvancedMode, getLastSessionExerciseData, updateExerciseNote, customPrograms, saveCustomProgram, deleteCustomProgram, customExercises, addCustomExercise, getAllExercises
     }}>
       {children}
     </DataContext.Provider>

@@ -1,21 +1,31 @@
+
 import React, { useMemo, useState } from 'react';
 import { useData } from '../context/DataContext';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { TrendingUp, ArrowUpRight, ArrowDownRight, Minus, HelpCircle, AlertTriangle, Activity } from 'lucide-react';
-import { TRAINING_PROGRAM } from '../constants';
 import { Link } from 'react-router-dom';
 
 const Progress: React.FC = () => {
-  const { sessions } = useData();
-  const [selectedExerciseId, setSelectedExerciseId] = useState<string>(TRAINING_PROGRAM[0].exercises[0].id);
+  const { sessions, getAllExercises } = useData();
+  const allAvailableExercises = getAllExercises();
+  
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string>(allAvailableExercises[0]?.id || '');
 
-  // Flatten all exercises for the selector
-  const allExercises = useMemo(() => {
-    return TRAINING_PROGRAM.flatMap(day => day.exercises);
-  }, []);
+  // Group exercises by muscle group for a better UI in dropdown
+  const groupedExercises = useMemo(() => {
+    return allAvailableExercises.reduce((acc, ex) => {
+        const group = ex.muscleGroup || 'Altele';
+        if (!acc[group]) acc[group] = [];
+        acc[group].push(ex);
+        return acc;
+    // Using a more explicit type for the accumulator to ensure Object.entries works correctly later
+    }, {} as Record<string, any[]>);
+  }, [allAvailableExercises]);
 
   // Calculate stats for the selected exercise
   const data = useMemo(() => {
+    if (!selectedExerciseId) return [];
+    
     // Get all completed top sets for this exercise, sorted by date asc
     const points = sessions
       .filter(s => s.status === 'COMPLETED')
@@ -24,15 +34,23 @@ const Progress: React.FC = () => {
           .filter(e => e.exerciseId === selectedExerciseId)
           .map(e => {
             const topSet = e.sets.find(s => s.type === 'TOP_SET');
+            // If no top set, try to use the heaviest set from that session
+            const fallbackSet = e.sets.reduce((prev, current) => {
+                return (Number(current.weight) > Number(prev?.weight || 0)) ? current : prev;
+            }, e.sets[0]);
+            
+            const targetSet = topSet || fallbackSet;
+
             return {
               date: s.completedAt || 0,
-              weight: Number(topSet?.weight || 0),
-              reps: Number(topSet?.reps || 0),
+              weight: Number(targetSet?.weight || 0),
+              reps: Number(targetSet?.reps || 0),
               // Epley Formula: 1RM = Weight * (1 + Reps/30)
-              e1rm: Number(topSet?.weight || 0) * (1 + Number(topSet?.reps || 0) / 30)
+              e1rm: Number(targetSet?.weight || 0) * (1 + Number(targetSet?.reps || 0) / 30)
             };
           })
       )
+      .filter(p => p.weight > 0) // Filter out empty points
       .sort((a, b) => a.date - b.date);
 
     return points;
@@ -51,67 +69,73 @@ const Progress: React.FC = () => {
     };
   }, [data]);
 
-  // Plateau Detector (Stagnation Radar)
+  // Plateau Detector
   const plateauDetected = useMemo(() => {
     if (data.length < 3) return false;
     const last3 = data.slice(-3);
-    // If the 1RM has not improved by at least 1% from 3 sessions ago to now
-    // Or if it has declined
     const firstOfThree = last3[0].e1rm;
     const current = last3[2].e1rm;
-    
-    // Check for regression or stagnation (< 1% growth over 3 sessions)
-    return current <= firstOfThree * 1.01; 
+    return current <= firstOfThree * 1.005; // Less than 0.5% growth
   }, [data]);
 
   if (sessions.length === 0) {
      return (
-        <div className="text-center py-20">
-            <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-wide">Nu există date</h3>
-            <p className="text-zinc-500 text-sm">Progresul va apărea aici după prima sesiune salvată.</p>
+        <div className="text-center py-20 animate-fade-in">
+            <h3 className="text-xl font-black text-white mb-2 uppercase tracking-wide">DATE INSUFICIENTE</h3>
+            <p className="text-zinc-500 text-sm font-mono">Progresul va fi vizibil după prima sesiune salvată.</p>
         </div>
      )
   }
 
   return (
-    <div className="animate-fade-in">
-      <h2 className="text-2xl font-black text-white mb-6 uppercase tracking-tight">Analiză Progres</h2>
+    <div className="animate-fade-in pb-12">
+      <header className="mb-8 border-l-4 border-primary pl-4">
+        <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">Analiză<br/><span className="text-primary">Performanță</span></h2>
+        <p className="text-zinc-500 text-[10px] font-mono uppercase tracking-widest mt-2">Urmărirea progresului incremental</p>
+      </header>
 
       {/* Exercise Selector */}
-      <div className="mb-8 group">
-        <label className="block text-[10px] font-black text-zinc-600 uppercase mb-2 tracking-widest">Selectează exercițiul</label>
+      <div className="mb-10">
+        <label className="block text-[10px] font-black text-zinc-600 uppercase mb-2 tracking-widest pl-1">Alege Exercițiul de Monitorizat</label>
         <div className="relative">
             <select 
             value={selectedExerciseId}
             onChange={(e) => setSelectedExerciseId(e.target.value)}
-            className="w-full bg-black border-2 border-zinc-800 text-white p-4 focus:border-primary outline-none appearance-none font-bold uppercase tracking-wide rounded-none"
+            className="w-full bg-surface border-2 border-zinc-900 text-white p-4 focus:border-primary outline-none appearance-none font-bold uppercase tracking-wide rounded-none transition-all"
             >
-            {allExercises.map(ex => (
-                <option key={ex.id} value={ex.id}>{ex.name}</option>
+            {/* Fix: Explicitly cast entries and provide types to prevent "unknown" inference in strict TS environments */}
+            {(Object.entries(groupedExercises) as [string, any[]][]).map(([group, exList]) => (
+                <optgroup key={group} label={group.toUpperCase()} className="bg-black text-zinc-500 py-2">
+                    {exList.map((ex: any) => (
+                        <option key={ex.id} value={ex.id} className="text-white bg-surface">{ex.name}</option>
+                    ))}
+                </optgroup>
             ))}
             </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">▼</div>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
+                <TrendingUp size={16} />
+            </div>
         </div>
       </div>
 
       {data.length === 0 ? (
-        <div className="p-8 bg-zinc-950/50 border-2 border-zinc-900 text-center text-zinc-500 font-mono text-sm">
-          NO DATA FOUND FOR THIS EXERCISE
+        <div className="p-12 bg-zinc-950/50 border-2 border-zinc-900 text-center text-zinc-600 font-mono text-xs animate-scale-in">
+          NU EXISTĂ DATE SALVATE PENTRU ACEST EXERCIȚIU
         </div>
       ) : (
         <>
           {/* Plateau Radar Alert */}
           {plateauDetected && (
-              <div className="bg-red-950/20 border-l-4 border-red-500 p-4 mb-8 flex items-start gap-4 animate-pulse-fast">
-                  <div className="p-2 bg-red-500/10 rounded-full text-red-500 mt-1">
+              <div className="bg-red-950/20 border-l-4 border-red-500 p-5 mb-8 flex items-start gap-4 animate-scale-in">
+                  <div className="p-2 bg-red-500/10 text-red-500 mt-1">
                       <AlertTriangle size={20} />
                   </div>
                   <div>
-                      <h4 className="text-red-500 font-black uppercase tracking-wider text-sm mb-1">Stagnare Detectată</h4>
+                      <h4 className="text-red-500 font-black uppercase tracking-wider text-sm mb-1">Alertă Stagnare</h4>
                       <p className="text-[10px] text-red-200 font-mono leading-relaxed">
-                          Est. 1RM nu a crescut semnificativ în ultimele 3 sesiuni.
+                          Forța estimată (1RM) nu a progresat în ultimele 3 sesiuni. 
                           <br/>
-                          <span className="opacity-70">Sugestii: Verifică somnul, caloriile, sau ia în considerare un Deload.</span>
+                          <span className="opacity-70">Verifică execuția, somnul sau ia în calcul o săptămână de Deload.</span>
                       </p>
                   </div>
               </div>
@@ -119,35 +143,36 @@ const Progress: React.FC = () => {
 
           {/* Comparison Cards */}
           {comparison && (
-             <div className="grid grid-cols-3 gap-2 mb-8">
-                <div className="bg-surface border-2 border-zinc-900 p-3">
-                    <span className="text-[10px] text-zinc-600 font-black uppercase block mb-1">Diferență Kg</span>
-                    <div className={`flex items-center text-xl font-black ${comparison.weightDiff > 0 ? 'text-emerald-500' : comparison.weightDiff < 0 ? 'text-red-500' : 'text-zinc-600'}`}>
-                        {comparison.weightDiff > 0 ? <ArrowUpRight size={18} /> : comparison.weightDiff < 0 ? <ArrowDownRight size={18} /> : <Minus size={18} />}
-                        <span className="ml-1">{comparison.weightDiff > 0 ? '+' : ''}{comparison.weightDiff.toFixed(1)}</span>
+             <div className="grid grid-cols-3 gap-3 mb-8">
+                <div className="bg-surface border border-zinc-800 p-4">
+                    <span className="text-[10px] text-zinc-600 font-black uppercase block mb-1">Δ Greutate</span>
+                    <div className={`flex items-center text-xl font-black font-mono ${comparison.weightDiff > 0 ? 'text-emerald-500' : comparison.weightDiff < 0 ? 'text-red-500' : 'text-zinc-600'}`}>
+                        <span className="text-sm mr-1">{comparison.weightDiff > 0 ? '+' : ''}</span>
+                        {comparison.weightDiff.toFixed(1)}
                     </div>
                 </div>
-                <div className="bg-surface border-2 border-zinc-900 p-3">
-                    <span className="text-[10px] text-zinc-600 font-black uppercase block mb-1">Diferență Reps</span>
-                    <div className={`flex items-center text-xl font-black ${comparison.repsDiff > 0 ? 'text-emerald-500' : comparison.repsDiff < 0 ? 'text-red-500' : 'text-zinc-600'}`}>
-                        {comparison.repsDiff > 0 ? <ArrowUpRight size={18} /> : comparison.repsDiff < 0 ? <ArrowDownRight size={18} /> : <Minus size={18} />}
-                        <span className="ml-1">{comparison.repsDiff > 0 ? '+' : ''}{comparison.repsDiff}</span>
+                <div className="bg-surface border border-zinc-800 p-4">
+                    <span className="text-[10px] text-zinc-600 font-black uppercase block mb-1">Δ Reps</span>
+                    <div className={`flex items-center text-xl font-black font-mono ${comparison.repsDiff > 0 ? 'text-emerald-500' : comparison.repsDiff < 0 ? 'text-red-500' : 'text-zinc-600'}`}>
+                        <span className="text-sm mr-1">{comparison.repsDiff > 0 ? '+' : ''}</span>
+                        {comparison.repsDiff}
                     </div>
                 </div>
-                <div className="bg-surface border-2 border-zinc-900 p-3">
-                    <span className="text-[10px] text-zinc-600 font-black uppercase block mb-1">Est. 1RM</span>
-                    <div className={`flex items-center text-xl font-black ${comparison.e1rmDiff > 0 ? 'text-primary' : 'text-zinc-500'}`}>
-                         {comparison.e1rmDiff.toFixed(1)}
+                <div className="bg-surface border border-primary/20 p-4 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-full h-0.5 bg-primary/30"></div>
+                    <span className="text-[10px] text-primary font-black uppercase block mb-1">1RM Est.</span>
+                    <div className="text-xl font-black text-white font-mono">
+                         {data[data.length - 1].e1rm.toFixed(1)}
                     </div>
                 </div>
              </div>
           )}
 
-          {/* Chart */}
-          <div className="bg-zinc-950 border-2 border-zinc-900 p-4 h-64 mb-6 relative">
-            <div className="absolute top-2 right-4 z-10 flex items-center gap-2">
-                 <Activity size={12} className="text-zinc-600" />
-                 <span className="text-[9px] text-zinc-600 font-mono uppercase">Performance Trend</span>
+          {/* Chart Section */}
+          <div className="bg-black border border-zinc-800 p-6 h-80 mb-8 relative shadow-2xl">
+            <div className="absolute top-4 right-6 z-10 flex items-center gap-2">
+                 <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                 <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-widest">Live Progression Tool</span>
             </div>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data}>
@@ -155,38 +180,43 @@ const Progress: React.FC = () => {
                 <XAxis 
                     dataKey="date" 
                     tickFormatter={(tick) => new Date(tick).toLocaleDateString('ro-RO', {day: '2-digit', month: '2-digit'})} 
-                    stroke="#3f3f46"
+                    stroke="#525252"
                     fontSize={10}
                     tickLine={false}
                     axisLine={false}
+                    dy={10}
                 />
-                <YAxis stroke="#3f3f46" fontSize={10} domain={['auto', 'auto']} tickLine={false} axisLine={false} />
+                <YAxis stroke="#525252" fontSize={10} domain={['auto', 'auto']} tickLine={false} axisLine={false} dx={-10} />
                 <Tooltip 
-                    contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', color: '#e4e4e7', borderRadius: '0px' }}
+                    contentStyle={{ backgroundColor: '#09090b', border: '1px solid #27272a', color: '#e4e4e7', borderRadius: '0px', fontFamily: 'monospace', fontSize: '10px' }}
                     labelFormatter={(label) => new Date(label).toLocaleDateString('ro-RO')}
-                    formatter={(value: number) => [`${value.toFixed(1)} kg`, 'Est. 1RM']}
+                    formatter={(value: number) => [`${value.toFixed(1)} kg`, 'Capacitate Max. (1RM)']}
                 />
                 <Line 
-                    type="linear" 
+                    type="monotone" 
                     dataKey="e1rm" 
-                    stroke="#d97706" 
-                    strokeWidth={2} 
-                    dot={{r: 4, fill: '#000', stroke: '#d97706', strokeWidth: 2}} 
-                    activeDot={{r: 6, fill: '#fff'}} 
+                    stroke="#D4AF37" 
+                    strokeWidth={3} 
+                    dot={{r: 4, fill: '#000', stroke: '#D4AF37', strokeWidth: 2}} 
+                    activeDot={{r: 6, fill: '#fff', stroke: '#D4AF37', strokeWidth: 2}} 
+                    animationDuration={1500}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
           
-          {/* Contextual Link */}
-          <Link to="/education?section=s8_2" className="block p-5 bg-zinc-900/30 border-l-2 border-primary hover:bg-zinc-900 transition-colors group">
-             <div className="flex items-start">
-                <HelpCircle className="text-zinc-600 group-hover:text-primary mt-0.5 mr-3 flex-shrink-0 transition-colors" size={20} />
-                <div>
-                    <h5 className="text-sm font-black text-white uppercase tracking-wider">De ce variază graficul?</h5>
-                    <p className="text-xs text-zinc-500 mt-1 font-mono">
-                        Citește despre "Non-linearitate" în secțiunea de Educație. Click aici.
-                    </p>
+          {/* Education Context Link */}
+          <Link to="/education?section=s11" className="block p-5 bg-zinc-900/40 border border-zinc-800 hover:border-primary/50 transition-all group relative">
+             <div className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-800 group-hover:text-primary/30 transition-colors">
+                 <HelpCircle size={48} />
+             </div>
+             <div className="relative z-10">
+                <h5 className="text-sm font-black text-white uppercase tracking-wider mb-1">De ce variază graficul meu?</h5>
+                <p className="text-[10px] text-zinc-500 font-mono leading-relaxed max-w-[80%]">
+                    Află cum oboseala acumulată și tehnica de execuție influențează performanța zilnică.
+                </p>
+                <div className="mt-3 flex items-center text-[9px] text-primary font-black uppercase tracking-widest">
+                    Consultă Manualul <TrendingUp size={10} className="ml-2" />
                 </div>
              </div>
           </Link>

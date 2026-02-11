@@ -19,6 +19,13 @@ export interface ExerciseLog {
   finishedAt?: number;
   note?: string;
   settingsNote?: string; 
+  // Custom context for this specific instance in a workout
+  customContext?: {
+    why?: string;
+    scheme?: string;
+    cue?: string;
+    rest?: number;
+  };
 }
 
 export interface WorkoutSession {
@@ -38,8 +45,8 @@ export interface User {
 }
 
 export interface ProgramExercise {
-  id: string; // For master list, this is the master ID. For program, this is unique instance ID? No, keeps ref to master.
-  masterId?: string; // Reference to the library ID
+  id: string; 
+  masterId?: string; 
   name: string;
   defaultRampUpSets: number;
   defaultBackOffSets: number;
@@ -47,13 +54,18 @@ export interface ProgramExercise {
   targetReps: string;
   targetRir: number;
   note?: string;
+  // New customization fields
+  why?: string;
+  scheme?: string;
+  cue?: string;
+  rest?: number;
 }
 
 export interface ProgramDay {
   id: string;
   name: string;
   exercises: ProgramExercise[];
-  isCustom?: boolean; // Flag to identify user created programs
+  isCustom?: boolean; 
 }
 
 export interface MasterExercise {
