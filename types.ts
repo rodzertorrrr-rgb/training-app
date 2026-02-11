@@ -1,5 +1,5 @@
 
-export type SetType = 'RAMP_UP' | 'TOP_SET' | 'BACK_OFF';
+export type SetType = 'RAMP_UP' | 'TOP_SET' | 'BACK_OFF' | 'DROP_SET' | 'WORKING';
 
 export interface SetLog {
   id: string;
@@ -19,12 +19,12 @@ export interface ExerciseLog {
   finishedAt?: number;
   note?: string;
   settingsNote?: string; 
-  // Custom context for this specific instance in a workout
   customContext?: {
     why?: string;
     scheme?: string;
     cue?: string;
     rest?: number;
+    tempo?: string;
   };
 }
 
@@ -54,11 +54,12 @@ export interface ProgramExercise {
   targetReps: string;
   targetRir: number;
   note?: string;
-  // New customization fields
+  // Advanced customization
   why?: string;
   scheme?: string;
   cue?: string;
   rest?: number;
+  tempo?: string;
 }
 
 export interface ProgramDay {

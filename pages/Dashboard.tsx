@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { TRAINING_PROGRAM } from '../constants';
-import { Play, ChevronRight, Clock, Dumbbell, Sparkles, Plus, Layers, ChevronDown, ListFilter, Target } from 'lucide-react';
+import { Play, ChevronRight, Dumbbell, Sparkles, Plus, Layers, ChevronDown, Target } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  const { draftSession, startSession, advancedMode, customPrograms } = useData();
+  const { draftSession, startSession, customPrograms } = useData();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
       if (draftSession.dayId === dayId) {
         navigate(`/workout/${dayId}`);
       } else {
-        alert("Ai deja o sesiune activă. Finalizeaz-o pe cea curentă.");
+        alert("Ai deja o sesiune activă.");
         navigate(`/workout/${draftSession.dayId}`);
       }
     } else {
@@ -36,20 +36,13 @@ const Dashboard: React.FC = () => {
 
   const renderCard = (day: any, index: number, isCustom: boolean) => {
       const isDraftActive = draftSession && draftSession.dayId === day.id;
-      const isOtherDraftActive = draftSession && draftSession.dayId !== day.id;
-
       return (
         <button
           key={day.id} 
           onClick={() => handleStart(day.id)}
-          disabled={isOtherDraftActive}
           style={{ animationDelay: `${index * 50}ms` }}
           className={`w-full text-left relative group transition-all duration-300 animate-slide-up-fade opacity-0 fill-mode-forwards ${
-              isDraftActive 
-              ? 'scale-[1.01] z-10' 
-              : isOtherDraftActive
-                ? 'opacity-30 blur-[1px] cursor-not-allowed'
-                : 'hover:-translate-y-1'
+              isDraftActive ? 'scale-[1.01] z-10' : 'hover:-translate-y-1'
           }`}
         >
           <div className={`h-full p-5 bg-card border ${isDraftActive ? 'border-primary shadow-glow' : 'border-zinc-800 hover:border-zinc-600'} flex flex-col justify-between relative overflow-hidden transition-all duration-300`}>
@@ -86,28 +79,22 @@ const Dashboard: React.FC = () => {
             /// RDZ<br /><span className="text-primary">PROTOCOL</span>
           </h2>
           
-          <div className="relative inline-block mt-4 group">
-            <button 
-                onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-                className="flex items-center gap-3 py-3 px-4 bg-zinc-900/50 border border-zinc-800 hover:border-primary/50 transition-all duration-300 active:scale-95 group w-fit relative overflow-hidden"
-            >
-                <div className={`p-1 transition-all ${isDrawerOpen ? 'rotate-180 bg-primary/10 text-primary' : 'text-zinc-500'}`}>
-                <ChevronDown size={14} />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono text-zinc-300 group-hover:text-white">
-                {isDrawerOpen ? 'Ascunde Sistemul' : 'Alege Antrenamentul'}
-                </span>
-                <div className="flex items-center gap-1 ml-4 border-l border-zinc-800 pl-4 opacity-70">
-                <span className="text-[9px] font-mono text-primary">{TRAINING_PROGRAM.length + customPrograms.length}</span>
-                <span className="text-[7px] font-mono text-zinc-600 uppercase">Programe</span>
-                </div>
-                <div className={`absolute bottom-0 left-0 h-[1px] bg-primary transition-all duration-500 ${isDrawerOpen ? 'w-full' : 'w-0'}`}></div>
-            </button>
-          </div>
+          <button 
+            onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+            className="flex items-center gap-2 mt-4 py-2 text-zinc-500 hover:text-primary transition-all duration-300 active:scale-95 group w-fit"
+          >
+            <div className={`p-1 border border-zinc-800 bg-zinc-900/50 group-hover:border-primary/50 transition-all ${isDrawerOpen ? 'rotate-180 bg-primary/10 border-primary/30' : ''}`}>
+              <ChevronDown size={14} className={isDrawerOpen ? 'text-primary' : ''} />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono">
+              {isDrawerOpen ? 'Închide' : 'Alege Antrenamentul'}
+            </span>
+          </button>
         </div>
 
-        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isDrawerOpen ? 'max-h-[300px] mt-6 opacity-100 mb-8' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-           <div className="flex p-1 bg-zinc-950/80 border border-zinc-900 backdrop-blur-md shadow-2xl">
+        {/* Action Drawer Logic */}
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isDrawerOpen ? 'max-h-[500px] mt-6 opacity-100 mb-8' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+           <div className="flex p-1 bg-zinc-950/80 border border-zinc-900 backdrop-blur-md shadow-2xl mb-4">
               <button 
                 onClick={() => setActiveTab('standard')}
                 className={`flex-1 flex items-center justify-center py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${activeTab === 'standard' ? 'bg-primary text-black' : 'text-zinc-500 hover:text-white hover:bg-zinc-900'}`}
@@ -124,68 +111,44 @@ const Dashboard: React.FC = () => {
               </button>
            </div>
            
-           <div className="mt-4 animate-staggered-reveal">
+           <div className="space-y-3">
               {activeTab === 'standard' ? (
-                <div className="grid gap-3">
-                  {TRAINING_PROGRAM.map((day, index) => renderCard(day, index, false))}
-                </div>
+                TRAINING_PROGRAM.map((day, index) => renderCard(day, index, false))
               ) : (
-                <div className="grid gap-3">
-                  {customPrograms.length === 0 ? (
-                    <div className="text-center py-10 border border-dashed border-zinc-800 bg-zinc-900/10">
-                        <Sparkles size={20} className="text-zinc-700 mx-auto mb-3" />
-                        <button 
-                            onClick={() => navigate('/settings/program-editor')}
-                            className="text-primary text-[10px] font-black uppercase tracking-widest hover:underline"
-                        >
-                            + Creează Primul Program
-                        </button>
-                    </div>
-                  ) : (
-                    <>
-                        {customPrograms.map((day, index) => renderCard(day, index, true))}
-                        <button 
-                            onClick={() => navigate('/settings/program-editor')}
-                            className="w-full mt-2 py-4 border border-zinc-800 bg-black text-zinc-500 hover:text-white hover:border-zinc-700 transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
-                        >
-                            <Plus size={14} />
-                            Adaugă Program Nou
-                        </button>
-                    </>
-                  )}
-                </div>
+                <>
+                  {customPrograms.map((day, index) => renderCard(day, index, true))}
+                  <button 
+                    onClick={() => navigate('/settings/program-editor')}
+                    className="w-full py-4 border border-zinc-800 bg-black text-zinc-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                  >
+                    <Plus size={14} /> Crează Program Nou
+                  </button>
+                </>
               )}
            </div>
         </div>
       </header>
 
       {draftSession && !isDrawerOpen && (
-        <div className="mb-8 border border-primary/50 bg-primaryDim/5 animate-scale-in p-5 flex flex-col md:flex-row justify-between items-center gap-4 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-2 opacity-10">
-             <Target size={64} className="text-primary group-hover:scale-110 transition-transform" />
-          </div>
+        <div className="mb-8 border border-primary/50 bg-primaryDim/5 animate-scale-in p-5 flex flex-col md:flex-row justify-between items-center gap-4 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-2 opacity-10"><Target size={64} className="text-primary" /></div>
           <div className="text-center md:text-left relative z-10">
-            <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
-               <div className="w-1.5 h-1.5 bg-primary animate-pulse-fast"></div>
-               <h3 className="text-primary font-black text-[9px] uppercase tracking-[0.2em]">Sesiune în curs</h3>
-            </div>
+            <h3 className="text-primary font-black text-[9px] uppercase tracking-[0.2em] mb-1">Sesiune activă</h3>
             <p className="text-white font-bold text-lg uppercase tracking-tight">{draftSession.dayName}</p>
           </div>
           <button 
             onClick={() => navigate(`/workout/${draftSession.dayId}`)}
-            className="w-full md:w-auto flex items-center justify-center space-x-3 bg-primary text-black px-6 py-3.5 font-black text-[10px] uppercase tracking-widest hover:bg-primaryHover transition-all active:scale-95 shadow-glow"
+            className="w-full md:w-auto bg-primary text-black px-6 py-3.5 font-black text-[10px] uppercase tracking-widest hover:bg-primaryHover transition-all active:scale-95 shadow-glow"
           >
-            <span>REIA SESIUNEA</span>
-            <Play size={10} className="fill-black" />
+            REIA ANTRENAMENTUL
           </button>
         </div>
       )}
 
-      {/* Main static view when drawer is closed */}
       {!isDrawerOpen && (
-          <div className="mt-12 opacity-50 text-center animate-fade-in py-10 border border-zinc-900">
+          <div className="mt-12 opacity-50 text-center py-10 border border-zinc-900">
               <Dumbbell className="mx-auto mb-4 text-zinc-800" size={32} />
-              <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em]">Protocolul este pregătit pentru execuție</p>
+              <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em]">Sistem pregătit. Alege un protocol.</p>
           </div>
       )}
     </div>
