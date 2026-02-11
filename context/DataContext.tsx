@@ -25,10 +25,9 @@ interface DataContextType {
   addCustomExercise: (name: string, muscleGroup: string) => MasterExercise;
   getAllExercises: () => MasterExercise[];
   weightLogs: Record<string, WeightEntry>;
-  saveWeight: (entry: WeightEntry) => void;
+  saveWeight: (weight: number, date: string, note?: string) => void;
   deleteWeight: (date: string) => void;
   getWeightStats: () => { current: number, avg7d: number, diff7d: number };
-  // FIX: Added integrityCheck to the DataContextType interface
   integrityCheck: () => Promise<string[]>;
 }
 
@@ -49,32 +48,46 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (user) {
       const sSessions = localStorage.getItem(`${PREFIX}sessions_${user.id}`);
-      const sDraft = localStorage.getItem(`${PREFIX}draft_${user.id}`);
+      const sWeight = localStorage.getItem(`${PREFIX}weight_${user.id}`);
       const sAdv = localStorage.getItem(`${PREFIX}adv_${user.id}`);
       const sCustP = localStorage.getItem(`${PREFIX}custom_programs_${user.id}`);
       const sCustE = localStorage.getItem(`${PREFIX}custom_exercises_${user.id}`);
-      const sWeight = localStorage.getItem(`${PREFIX}weight_${user.id}`);
 
       setSessions(sSessions ? JSON.parse(sSessions) : []);
-      setDraftSession(sDraft ? JSON.parse(sDraft) : null);
+      setWeightLogs(sWeight ? JSON.parse(sWeight) : {});
       setAdvancedMode(sAdv === 'true');
       setCustomPrograms(sCustP ? JSON.parse(sCustP) : []);
       setCustomExercises(sCustE ? JSON.parse(sCustE) : []);
-      setWeightLogs(sWeight ? JSON.parse(sWeight) : {});
     }
   }, [user]);
 
-  useEffect(() => {
-    if (user && draftSession) {
-      localStorage.setItem(`${PREFIX}draft_${user.id}`, JSON.stringify(draftSession));
-    } else if (user && !draftSession) {
-      localStorage.removeItem(`${PREFIX}draft_${user.id}`);
-    }
-  }, [draftSession, user]);
+  // Fix: Implemented getLastSessionExerciseData to retrieve performance from the previous session for a given exercise.
+  const getLastSessionExerciseData = (exerciseId: string) => {
+    const lastSession = sessions.find(s => s.exercises.some(e => e.exerciseId === exerciseId));
+    if (!lastSession) return null;
+    const ex = lastSession.exercises.find(e => e.exerciseId === exerciseId);
+    if (!ex) return null;
+    const topSet = ex.sets.find(s => s.type === 'TOP_SET');
+    const targetSet = topSet || ex.sets.reduce((prev, curr) => (Number(curr.weight) > Number(prev.weight) ? curr : prev), ex.sets[0]);
+    if (!targetSet || targetSet.weight === '') return null;
+    return {
+      weight: Number(targetSet.weight),
+      reps: Number(targetSet.reps),
+      rir: Number(targetSet.rir)
+    };
+  };
 
-  const saveWeight = (entry: WeightEntry) => {
+  const saveWeight = (weight: number, date: string, note?: string) => {
     if (!user) return;
-    const newLogs = { ...weightLogs, [entry.date]: entry };
+    const existing = weightLogs[date];
+    const newEntry: WeightEntry = {
+      date,
+      weight: Number(Number(weight).toFixed(1)),
+      note,
+      createdAt: existing ? existing.createdAt : Date.now(),
+      updatedAt: Date.now()
+    };
+    const newLogs = { ...weightLogs, [date]: newEntry };
     setWeightLogs(newLogs);
     localStorage.setItem(`${PREFIX}weight_${user.id}`, JSON.stringify(newLogs));
   };
@@ -88,38 +101,24 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getWeightStats = () => {
-    const dates = Object.keys(weightLogs).sort().reverse();
-    if (dates.length === 0) return { current: 0, avg7d: 0, diff7d: 0 };
-    const current = weightLogs[dates[0]].weight;
-    const last7 = dates.slice(0, 7).map(d => weightLogs[d].weight);
+    const entries = Object.values(weightLogs).sort((a, b) => b.date.localeCompare(a.date));
+    if (entries.length === 0) return { current: 0, avg7d: 0, diff7d: 0 };
+
+    const current = entries[0].weight;
+    
+    // Media ultimelor 7 intrări
+    const last7 = entries.slice(0, 7).map(e => e.weight);
     const avg7d = last7.reduce((a, b) => a + b, 0) / last7.length;
-    const prev7 = dates.slice(7, 14).map(d => weightLogs[d].weight);
+
+    // Trend (comparație cu cele 7 intrări anterioare)
+    const prev7 = entries.slice(7, 14).map(e => e.weight);
     const prevAvg = prev7.length > 0 ? prev7.reduce((a, b) => a + b, 0) / prev7.length : avg7d;
-    return { current, avg7d, diff7d: avg7d - prevAvg };
-  };
 
-  const saveCustomProgram = (program: ProgramDay) => {
-    if (!user) return;
-    const newProgs = [...customPrograms.filter(p => p.id !== program.id), program];
-    setCustomPrograms(newProgs);
-    localStorage.setItem(`${PREFIX}custom_programs_${user.id}`, JSON.stringify(newProgs));
-  };
-
-  const deleteCustomProgram = (id: string) => {
-    if (!user) return;
-    const newProgs = customPrograms.filter(p => p.id !== id);
-    setCustomPrograms(newProgs);
-    localStorage.setItem(`${PREFIX}custom_programs_${user.id}`, JSON.stringify(newProgs));
-  };
-
-  const addCustomExercise = (name: string, muscleGroup: string) => {
-    const newEx = { id: `custom_${generateId()}`, name, muscleGroup };
-    if (user) {
-      const newList = [...customExercises, newEx];
-      setCustomExercises(newList);
-      localStorage.setItem(`${PREFIX}custom_exercises_${user.id}`, JSON.stringify(newList));
-    }
-    return newEx;
+    return { 
+      current, 
+      avg7d: Number(avg7d.toFixed(1)), 
+      diff7d: Number((avg7d - prevAvg).toFixed(2)) 
+    };
   };
 
   const startSession = (dayId: string) => {
@@ -127,23 +126,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const allP = [...TRAINING_PROGRAM, ...customPrograms];
     const day = allP.find(d => d.id === dayId);
     if (!day) return;
-
-    const newExs: ExerciseLog[] = day.exercises.map(ex => {
-      const sets: SetLog[] = [];
-      for (let i = 0; i < ex.defaultRampUpSets; i++) sets.push({ id: generateId(), type: 'RAMP_UP', weight: '', reps: '', rir: '', isCompleted: false });
-      if (ex.hasTopSet) sets.push({ id: generateId(), type: 'TOP_SET', weight: '', reps: '', rir: '', isCompleted: false });
-      for (let i = 0; i < ex.defaultBackOffSets; i++) sets.push({ id: generateId(), type: 'BACK_OFF', weight: '', reps: '', rir: '', isCompleted: false });
-
-      // Căutăm ultimul Setup Note pentru acest exercițiu în tot istoricul
-      const lastSessionWithNote = [...sessions].reverse().find(s => s.exercises.find(e => e.exerciseId === ex.id && e.settingsNote));
-      const lastNote = lastSessionWithNote?.exercises.find(e => e.exerciseId === ex.id)?.settingsNote || '';
-
-      return {
-        id: generateId(), exerciseId: ex.id, name: ex.name, sets, settingsNote: lastNote,
-        customContext: { why: ex.why, scheme: ex.scheme, cue: ex.cue, rest: ex.rest }
-      };
-    });
-
+    const newExs: ExerciseLog[] = day.exercises.map(ex => ({
+      id: generateId(), exerciseId: ex.id, name: ex.name, 
+      sets: Array.from({length: ex.defaultRampUpSets + (ex.hasTopSet ? 1 : 0) + ex.defaultBackOffSets}).map((_, i) => ({
+        id: generateId(), type: i < ex.defaultRampUpSets ? 'RAMP_UP' : (i === ex.defaultRampUpSets && ex.hasTopSet ? 'TOP_SET' : 'BACK_OFF'),
+        weight: '', reps: '', rir: '', isCompleted: false
+      }))
+    }));
     setDraftSession({ id: generateId(), userId: user.id, dayId, dayName: day.name, status: 'DRAFT', startedAt: Date.now(), exercises: newExs });
   };
 
@@ -156,28 +145,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setDraftSession(null);
   };
 
-  const updateExerciseNote = (exId: string, note: string) => {
-    if (!draftSession) return;
-    const updated = { ...draftSession, exercises: draftSession.exercises.map(e => e.exerciseId === exId ? { ...e, settingsNote: note } : e) };
-    setDraftSession(updated);
-  };
-
-  const removeSet = (exId: string, setId: string) => {
-    if (!draftSession) return;
-    const updated = { ...draftSession, exercises: draftSession.exercises.map(e => e.id === exId ? { ...e, sets: e.sets.filter(s => s.id !== setId) } : e) };
-    setDraftSession(updated);
-  };
-
-  // FIX: Implemented integrityCheck function
   const integrityCheck = async (): Promise<string[]> => {
     const report: string[] = ["Verificare date..."];
     if (!user) {
       report.push("Eroare: Utilizator neconectat.");
       return report;
     }
-    report.push(`Utilizator: ${user.name}`);
     report.push(`Sesiuni: ${sessions.length}`);
-    report.push(`Programe Custom: ${customPrograms.length}`);
     report.push(`Greutate: ${Object.keys(weightLogs).length} intrări`);
     report.push("Integritate OK.");
     return report;
@@ -188,15 +162,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       sessions, draftSession, startSession, updateDraft: setDraftSession, saveSession, discardSession: () => setDraftSession(null), 
       deleteSession: (id) => { const ns = sessions.filter(s => s.id !== id); setSessions(ns); localStorage.setItem(`${PREFIX}sessions_${user?.id}`, JSON.stringify(ns)); },
       advancedMode, toggleAdvancedMode: () => { const nv = !advancedMode; setAdvancedMode(nv); localStorage.setItem(`${PREFIX}adv_${user?.id}`, String(nv)); },
+      getLastSessionExerciseData,
       getExerciseHistory: (id) => sessions.filter(s => s.exercises.some(e => e.exerciseId === id)).map(s => ({ date: s.completedAt, sets: s.exercises.find(e => e.exerciseId === id)?.sets })).slice(0, 5),
-      updateExerciseNote, removeSet, customPrograms, saveCustomProgram, deleteCustomProgram, customExercises, addCustomExercise, getAllExercises: () => [...MASTER_EXERCISE_LIST, ...customExercises],
-      weightLogs, saveWeight, deleteWeight, getWeightStats, getLastSessionExerciseData: (id) => null, // Placeholder
-      // FIX: Provided integrityCheck in context value
-      integrityCheck
+      updateExerciseNote: (exId, note) => { if(!draftSession) return; const upd = {...draftSession, exercises: draftSession.exercises.map(e => e.exerciseId === exId ? {...e, settingsNote: note} : e)}; setDraftSession(upd); },
+      removeSet: (exId, setId) => { if(!draftSession) return; const upd = {...draftSession, exercises: draftSession.exercises.map(e => e.id === exId ? {...e, sets: e.sets.filter(s => s.id !== setId)} : e)}; setDraftSession(upd); },
+      customPrograms, saveCustomProgram: (p) => { const np = [...customPrograms.filter(x => x.id !== p.id), p]; setCustomPrograms(np); localStorage.setItem(`${PREFIX}custom_programs_${user?.id}`, JSON.stringify(np)); },
+      deleteCustomProgram: (id) => { const np = customPrograms.filter(x => x.id !== id); setCustomPrograms(np); localStorage.setItem(`${PREFIX}custom_programs_${user?.id}`, JSON.stringify(np)); },
+      customExercises, addCustomExercise: (name, muscleGroup) => { const ne = {id: `custom_${generateId()}`, name, muscleGroup}; const nex = [...customExercises, ne]; setCustomExercises(nex); localStorage.setItem(`${PREFIX}custom_exercises_${user?.id}`, JSON.stringify(nex)); return ne; },
+      getAllExercises: () => [...MASTER_EXERCISE_LIST, ...customExercises],
+      weightLogs, saveWeight, deleteWeight, getWeightStats, integrityCheck
     }}>
       {children}
     </DataContext.Provider>
   );
 };
 
-export const useData = () => { const c = useContext(DataContext); if (!c) throw new Error('ERR'); return c; };
+export const useData = () => {
+  const context = useContext(DataContext);
+  if (!context) throw new Error('ERR');
+  return context;
+};

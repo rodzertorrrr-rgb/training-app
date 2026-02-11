@@ -2,9 +2,11 @@
 export type SetType = 'RAMP_UP' | 'TOP_SET' | 'BACK_OFF' | 'DROP_SET' | 'WORKING';
 
 export interface WeightEntry {
-  date: string;
-  weight: number;
-  note?: string;
+  date: string;       // YYYY-MM-DD (Unique key)
+  weight: number;     // 1 decimal precision
+  note?: string;      // Optional
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface SetLog {
