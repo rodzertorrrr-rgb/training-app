@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { User, WorkoutSession, SetLog, ExerciseLog, SetType, ProgramExercise, ProgramDay, MasterExercise } from '../types';
+import { User, WorkoutSession, SetLog, ExerciseLog, SetType, ProgramExercise, ProgramDay, MasterExercise, WeightEntry } from '../types';
 import { useAuth } from './AuthContext';
 import { TRAINING_PROGRAM, MASTER_EXERCISE_LIST } from '../constants';
 
@@ -28,6 +28,12 @@ interface DataContextType {
   customExercises: MasterExercise[];
   addCustomExercise: (name: string, muscleGroup: string) => MasterExercise;
   getAllExercises: () => MasterExercise[];
+
+  // Weight Management
+  weightLogs: Record<string, WeightEntry>;
+  saveWeight: (entry: WeightEntry) => void;
+  deleteWeight: (date: string) => void;
+  getWeightStats: () => { current: number, avg7d: number, diff7d: number };
 }
 
 const generateId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -41,6 +47,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [advancedMode, setAdvancedMode] = useState<boolean>(false);
   const [customPrograms, setCustomPrograms] = useState<ProgramDay[]>([]);
   const [customExercises, setCustomExercises] = useState<MasterExercise[]>([]);
+  const [weightLogs, setWeightLogs] = useState<Record<string, WeightEntry>>({});
 
   const PREFIX = 'rdz_'; 
 
@@ -51,16 +58,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const storedAdvMode = localStorage.getItem(`${PREFIX}adv_${user.id}`);
       const storedCustomProgs = localStorage.getItem(`${PREFIX}custom_programs_${user.id}`);
       const storedCustomEx = localStorage.getItem(`${PREFIX}custom_exercises_${user.id}`);
+      const storedWeight = localStorage.getItem(`${PREFIX}weight_${user.id}`);
 
       setSessions(storedSessions ? JSON.parse(storedSessions) : []);
       setDraftSession(storedDraft ? JSON.parse(storedDraft) : null);
       setAdvancedMode(storedAdvMode === 'true');
       setCustomPrograms(storedCustomProgs ? JSON.parse(storedCustomProgs) : []);
       setCustomExercises(storedCustomEx ? JSON.parse(storedCustomEx) : []);
+      setWeightLogs(storedWeight ? JSON.parse(storedWeight) : {});
     }
   }, [user]);
 
-  // Auto-persist draft to prevent data loss (Crucial for Setup persistence)
   useEffect(() => {
     if (user && draftSession) {
       localStorage.setItem(`${PREFIX}draft_${user.id}`, JSON.stringify(draftSession));
@@ -68,6 +76,39 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem(`${PREFIX}draft_${user.id}`);
     }
   }, [draftSession, user]);
+
+  const saveWeight = (entry: WeightEntry) => {
+    if (!user) return;
+    const newLogs = { ...weightLogs, [entry.date]: entry };
+    setWeightLogs(newLogs);
+    localStorage.setItem(`${PREFIX}weight_${user.id}`, JSON.stringify(newLogs));
+  };
+
+  const deleteWeight = (date: string) => {
+    if (!user) return;
+    const newLogs = { ...weightLogs };
+    delete newLogs[date];
+    setWeightLogs(newLogs);
+    localStorage.setItem(`${PREFIX}weight_${user.id}`, JSON.stringify(newLogs));
+  };
+
+  const getWeightStats = () => {
+    const dates = Object.keys(weightLogs).sort().reverse();
+    if (dates.length === 0) return { current: 0, avg7d: 0, diff7d: 0 };
+
+    const current = weightLogs[dates[0]].weight;
+    
+    // Get last 7 days entries
+    const last7Days = dates.slice(0, 7).map(d => weightLogs[d].weight);
+    const avg7d = last7Days.reduce((a, b) => a + b, 0) / last7Days.length;
+
+    // Previous 7 days for diff
+    const prev7Days = dates.slice(7, 14).map(d => weightLogs[d].weight);
+    const prevAvg = prev7Days.length > 0 ? prev7Days.reduce((a, b) => a + b, 0) / prev7Days.length : avg7d;
+    const diff7d = avg7d - prevAvg;
+
+    return { current, avg7d, diff7d };
+  };
 
   const saveCustomProgram = (program: ProgramDay) => {
       if(!user) return;
@@ -142,7 +183,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         initialSets.push({ id: generateId(), type: 'BACK_OFF', weight: '', reps: '', rir: '', isCompleted: false });
       }
 
-      // Restore Setup Note from last time
       let lastSettings = '';
       const lastSessionWithEx = sessions.find(s => s.exercises.some(e => e.exerciseId === ex.id && e.settingsNote));
       if (lastSessionWithEx) {
@@ -219,7 +259,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <DataContext.Provider value={{ 
-      sessions, draftSession, startSession, updateDraft, saveSession, discardSession, deleteSession, logInternalEvent, integrityCheck, advancedMode, toggleAdvancedMode, getLastSessionExerciseData, updateExerciseNote, removeSet, getExerciseHistory, customPrograms, saveCustomProgram, deleteCustomProgram, customExercises, addCustomExercise, getAllExercises
+      sessions, draftSession, startSession, updateDraft, saveSession, discardSession, deleteSession, logInternalEvent, integrityCheck, advancedMode, toggleAdvancedMode, getLastSessionExerciseData, updateExerciseNote, removeSet, getExerciseHistory, customPrograms, saveCustomProgram, deleteCustomProgram, customExercises, addCustomExercise, getAllExercises,
+      weightLogs, saveWeight, deleteWeight, getWeightStats
     }}>
       {children}
     </DataContext.Provider>

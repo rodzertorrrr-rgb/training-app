@@ -9,6 +9,7 @@ import ActiveWorkout from './pages/ActiveWorkout';
 import History from './pages/History';
 import SessionDetails from './pages/SessionDetails';
 import Progress from './pages/Progress';
+import WeightTracker from './pages/WeightTracker';
 import Education from './pages/Education';
 import Settings from './pages/Settings';
 import ProgramEditor from './pages/ProgramEditor';
@@ -29,6 +30,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
               <Route index element={<Dashboard />} />
+              <Route path="weight" element={<WeightTracker />} />
               <Route path="workout/:dayId" element={<ActiveWorkout />} />
               <Route path="history" element={<History />} />
               <Route path="history/:sessionId" element={<SessionDetails />} />

@@ -1,6 +1,12 @@
 
 export type SetType = 'RAMP_UP' | 'TOP_SET' | 'BACK_OFF' | 'DROP_SET' | 'WORKING';
 
+export interface WeightEntry {
+  date: string;
+  weight: number;
+  note?: string;
+}
+
 export interface SetLog {
   id: string;
   type: SetType;
@@ -54,7 +60,6 @@ export interface ProgramExercise {
   targetReps: string;
   targetRir: number;
   note?: string;
-  // Advanced customization
   why?: string;
   scheme?: string;
   cue?: string;
