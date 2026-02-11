@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ro" class="dark">
   <head>
@@ -34,186 +35,66 @@
             boxShadow: {
               'glow': '0 0 20px -5px rgba(212, 175, 55, 0.3)',
               'glow-strong': '0 0 30px -5px rgba(212, 175, 55, 0.5)',
-              'sharp': '4px 4px 0px 0px rgba(20, 20, 20, 1)',
             },
             backgroundImage: {
               'gold-gradient': 'linear-gradient(135deg, #F5D061 0%, #D4AF37 50%, #B5952F 100%)',
-              'metal-gradient': 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
             },
             animation: {
               'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'shimmer': 'shimmer 2s linear infinite',
               'fade-in': 'fadeIn 0.5s ease-out forwards',
               'slide-up-fade': 'slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
               'slide-down': 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
               'scale-in': 'scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
               'title-reveal': 'titleReveal 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             },
             keyframes: {
-              shimmer: {
-                '0%': { backgroundPosition: '-200% 0' },
-                '100%': { backgroundPosition: '200% 0' }
-              },
-              fadeIn: {
-                '0%': { opacity: '0' },
-                '100%': { opacity: '1' }
-              },
-              slideUpFade: {
-                '0%': { opacity: '0', transform: 'translateY(20px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' }
-              },
-              slideDown: {
-                '0%': { opacity: '0', transform: 'translateY(-20px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' }
-              },
-              scaleIn: {
-                '0%': { opacity: '0', transform: 'scale(0.95)' },
-                '100%': { opacity: '1', transform: 'scale(1)' }
-              },
-              titleReveal: {
-                '0%': { opacity: '0', transform: 'scale(1.1) translateY(20px)', letterSpacing: '0.5em' },
-                '100%': { opacity: '1', transform: 'scale(1) translateY(0)', letterSpacing: '0em' }
-              }
+              fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+              slideUpFade: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+              slideUp: { '0%': { transform: 'translateY(100%)' }, '100%': { transform: 'translateY(0)' } },
+              slideDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+              scaleIn: { '0%': { opacity: '0', transform: 'scale(0.95)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
+              titleReveal: { '0%': { opacity: '0', transform: 'scale(1.1) translateY(20px)' }, '100%': { opacity: '1', transform: 'scale(1) translateY(0)' } }
             }
           }
         }
       }
     </script>
     <style>
-      body {
-        background-color: #000000;
-        color: #e5e5e5;
-        font-family: 'Inter', sans-serif;
-        -webkit-tap-highlight-color: transparent;
-      }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Montserrat', sans-serif;
-      }
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-      input[type="number"]::-webkit-inner-spin-button,
-      input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-      input:focus, button:focus {
-        outline: none;
-      }
-      .rounded-sm, .rounded, .rounded-lg, .rounded-xl, .rounded-2xl {
-        border-radius: 0px !important;
-      }
-      .rounded-full {
-        border-radius: 9999px !important;
-      }
-      .text-gold {
-        color: #D4AF37;
-      }
-      .text-gold-gradient {
-        background: linear-gradient(135deg, #F5D061 0%, #D4AF37 50%, #997b20 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-      }
-      .bg-gold-gradient {
-        background: linear-gradient(135deg, #F5D061 0%, #D4AF37 50%, #997b20 100%);
-      }
-      .border-gold-gradient {
-        border-image: linear-gradient(135deg, #F5D061, #D4AF37) 1;
-      }
-      .glass-panel {
-        background: rgba(10, 10, 10, 0.85);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      /* Loading Spinner for Initial State */
-      .initial-loader {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        width: 100vw;
-        background-color: #000;
-        color: #D4AF37;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 9999;
-      }
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(212, 175, 55, 0.3);
-        border-radius: 50%;
-        border-top-color: #D4AF37;
-        animation: spin 1s ease-in-out infinite;
-        margin-bottom: 20px;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      #error-display {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: #110000;
-        color: #ff5555;
-        padding: 20px;
-        z-index: 10000;
-        font-family: monospace;
-        overflow: auto;
-        font-size: 14px;
-        white-space: pre-wrap;
-      }
+      body { background-color: #000; color: #e5e5e5; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      .rounded-sm, .rounded, .rounded-lg, .rounded-xl, .rounded-2xl { border-radius: 0px !important; }
+      .text-gold-gradient { background: linear-gradient(135deg, #F5D061, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .glass-panel { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+      .initial-loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100vw; background: #000; color: #D4AF37; position: fixed; top: 0; z-index: 9999; }
+      .spinner { width: 30px; height: 30px; border: 2px solid rgba(212, 175, 55, 0.2); border-radius: 50%; border-top-color: #D4AF37; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+      @keyframes spin { to { transform: rotate(360deg); } }
     </style>
-  
-  <!-- Critical Error Handler -->
-  <script>
-    window.onerror = function(msg, url, line, col, error) {
-      const display = document.getElementById('error-display');
-      const loader = document.getElementById('initial-loader');
-      if (display) {
-        if(loader) loader.style.display = 'none';
-        display.style.display = 'block';
-        display.innerHTML += `<strong>CRITICAL ERROR:</strong><br>${msg}<br><small>${url}:${line}:${col}</small><br><br>`;
-        console.error("Global Error Caught:", msg, error);
-      }
-    };
-  </script>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
     "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
     "recharts": "https://esm.sh/recharts@^3.7.0",
-    "jspdf": "https://esm.sh/jspdf@^4.1.0",
-    "jspdf-autotable": "https://esm.sh/jspdf-autotable@^5.0.7",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
     "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
+    "jspdf": "https://esm.sh/jspdf@^4.1.0",
+    "jspdf-autotable": "https://esm.sh/jspdf-autotable@^5.0.7"
   }
 }
 </script>
 </head>
   <body>
-    <div id="error-display"></div>
     <div id="root">
-      <!-- Content visible before React loads -->
       <div id="initial-loader" class="initial-loader">
         <div class="spinner"></div>
-        <div style="font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: 0.2em; font-size: 12px;">LOADING SYSTEM</div>
+        <div style="font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: 0.3em; font-size: 10px; color: #D4AF37;">RDZ OS v2.1</div>
       </div>
     </div>
-    <!-- Entry point for Vite Build -->
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
