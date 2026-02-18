@@ -1,55 +1,36 @@
 
-export type SetType = 'RAMP_UP' | 'TOP_SET' | 'BACK_OFF' | 'DROP_SET' | 'WORKING';
+export type SetType = 'RAMP_UP' | 'TOP_SET' | 'BACK_OFF' | 'DROP_SET' | 'SUPER_SET' | 'WORKING';
+export type RestCategory = 'compound_barbell' | 'compound_machine' | 'isolation' | 'calves';
 
-export interface WeightEntry {
-  date: string;       // YYYY-MM-DD (Unique key)
-  weight: number;     // 1 decimal precision
-  note?: string;      // Optional
-  createdAt: number;
-  updatedAt: number;
-}
+export type MuscleGroup = 'Piept' | 'Spate' | 'Umeri' | 'Biceps' | 'Triceps' | 'Cvadriceps' | 'Femurali' | 'Glutei' | 'Adductori / Abductori' | 'Lower Back' | 'Gambe' | 'Core' | 'Altele';
+export type Equipment = 'barbell' | 'dumbbell' | 'cable' | 'machine' | 'smith' | 'bodyweight' | 'other';
+export type MovementType = 'compound' | 'isolation';
 
-export interface SetLog {
-  id: string;
-  type: SetType;
-  weight: number | '';
-  reps: number | '';
-  rir: number | '';
-  isCompleted: boolean;
-}
+export type EduCategory = 'FOUNDATION' | 'EFFORT' | 'CLARITY' | 'STRUCTURE' | 'RECOVERY' | 'ADVANCED' | 'PHILOSOPHY' | 'EXERCISES';
 
-export interface ExerciseLog {
-  id: string;
-  exerciseId: string;
+export interface ExerciseInfoCard {
   name: string;
-  sets: SetLog[];
-  startedAt?: number;
-  finishedAt?: number;
-  note?: string;
-  settingsNote?: string; 
-  customContext?: {
-    why?: string;
-    scheme?: string;
-    cue?: string;
-    rest?: number;
-    tempo?: string;
+  whyExercise: string;
+  whySets: string;
+  executionCues: string[];
+  recommendedRest: {
+    time: string;
+    label: string;
   };
 }
 
-export interface WorkoutSession {
+export interface EducationSection {
   id: string;
-  userId: string;
-  dayId: string;
-  dayName: string;
-  status: 'DRAFT' | 'COMPLETED';
-  startedAt: number;
-  completedAt?: number;
-  exercises: ExerciseLog[];
+  title: string;
+  category: EduCategory;
+  type: 'text' | 'list';
+  content: string | string[];
 }
 
-export interface User {
-  id: string;
-  name: string;
+export interface ExerciseMetadata {
+  axialStress: number;
+  movementType: MovementType;
+  tensionProfile: 'LENGTHENED' | 'SHORTENED' | 'NEUTRAL';
 }
 
 export interface ProgramExercise {
@@ -61,33 +42,97 @@ export interface ProgramExercise {
   hasTopSet: boolean; 
   targetReps: string;
   targetRir: number;
-  note?: string;
   why?: string;
-  scheme?: string;
+  whySets?: string;
   cue?: string;
-  rest?: number;
-  tempo?: string;
+  stimulus?: string;
+  lengthDominance?: 'LUNG' | 'MEDIE' | 'SCURTĂ';
+  defaultSetup?: string;
+  metadata?: ExerciseMetadata;
 }
 
 export interface ProgramDay {
   id: string;
   name: string;
   exercises: ProgramExercise[];
-  isCustom?: boolean; 
+  isCustom?: boolean;
+}
+
+export interface UserProfile {
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  sex: 'MALE' | 'FEMALE';
+  goal: 'HYPERTROPHY' | 'STRENGTH' | 'SPECIFIC';
+  priorities: MuscleGroup[];
+  daysPerWeek: number;
+  setPreference: 'TOP_BACKOFF' | 'STRAIGHT';
+}
+
+export interface User {
+  id: string;
+  name: string;
+  profile?: UserProfile;
 }
 
 export interface MasterExercise {
   id: string;
   name: string;
-  muscleGroup: string;
+  muscleGroup: MuscleGroup;
+  restCategory: RestCategory;
+  equipment?: Equipment;
+  movementType?: MovementType;
+  unilateral?: boolean;
 }
 
-export type EduCategory = 'FOUNDATION' | 'EFFORT' | 'CLARITY' | 'STRUCTURE' | 'RECOVERY' | 'ADVANCED' | 'PHILOSOPHY';
-
-export interface EducationalSection {
+export interface SubSetLog {
   id: string;
-  category: EduCategory;
-  title: string;
-  content: string | string[]; 
-  type: 'text' | 'list';
+  weight: string;
+  reps: string;
+  rir: number | string;
+}
+
+export interface SetLog {
+  id: string;
+  type: SetType;
+  weight: string;
+  reps: string;
+  rir: number | string;
+  restTime?: number;
+  isCompleted: boolean;
+  isFailure?: boolean;
+  subSets?: SubSetLog[];
+  supersetName?: string;    
+  supersetWeight?: string; 
+  supersetReps?: string;   
+}
+
+export interface ExerciseLog {
+  id: string;
+  exerciseId: string;
+  name: string;
+  sets: SetLog[];
+  setupNotes?: string;
+  notes_template?: string; 
+  supersetGroupId?: string; 
+  supersetOrder?: number;
+  customContext?: any;
+}
+
+export interface WorkoutSession {
+  id: string;
+  userId: string;
+  dayId: string;
+  dayName: string;
+  status: 'DRAFT' | 'COMPLETED';
+  startedAt: number;
+  completedAt?: number;
+  exercises: ExerciseLog[];
+  notes?: string;
+}
+
+export interface WeightEntry {
+  date: string;
+  weight: number;
+  note?: string;
+  createdAt: number;
+  updatedAt: number;
 }

@@ -1,28 +1,25 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { Trash2, ArrowRight, User, AlertTriangle, Plus } from 'lucide-react';
-import { User as UserType } from '../types';
+import { useAuth } from '../context/AuthContext.tsx';
+import { Trash2, ArrowRight, User, AlertTriangle, Plus, Upload, Cpu } from 'lucide-react';
+import { User as UserType } from '../types.ts';
 
 const Login: React.FC = () => {
   const [newName, setNewName] = useState('');
   const [userToDelete, setUserToDelete] = useState<UserType | null>(null);
-  const { availableUsers, register, login, deleteUser, user } = useAuth();
+  const { availableUsers, register, login, deleteUser, importUserData, user } = useAuth();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Cinematic Animation State
   const [showContent, setShowContent] = useState(false);
-  const [introPhase, setIntroPhase] = useState(0); // 0: Start, 1: Logo Reveal, 2: Content
+  const [introPhase, setIntroPhase] = useState(0);
 
   useEffect(() => {
-    // If user is already authenticated, redirect immediately
     if (user) {
         navigate('/');
         return;
     }
 
-    // Sequence the animation
     const timer1 = setTimeout(() => setIntroPhase(1), 500);
     const timer2 = setTimeout(() => {
         setIntroPhase(2);
@@ -44,10 +41,24 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleLogin = (userId: string) => {
-      login(userId);
-      navigate('/');
-  }
+  const handleSystemImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const payload = JSON.parse(event.target?.result as string);
+            if (!payload.user || !payload.sessions) throw new Error("Format invalid");
+            const newUserId = importUserData(payload);
+            login(newUserId);
+            navigate('/');
+        } catch (err) {
+            alert("Fișier invalid.");
+        }
+    };
+    reader.readAsText(file);
+  };
 
   const handleDeleteClick = (e: React.MouseEvent, user: UserType) => {
       e.stopPropagation();
@@ -64,7 +75,6 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen bg-black flex flex-col font-sans relative overflow-hidden">
       
-      {/* Intro Overlay - Only visible during phase 0 and 1 */}
       <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black transition-opacity duration-1000 ${introPhase >= 2 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
          <div className={`transform transition-all duration-1000 ${introPhase === 1 ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}`}>
              <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter font-heading text-center animate-title-reveal">
@@ -74,7 +84,6 @@ const Login: React.FC = () => {
          </div>
       </div>
 
-      {/* Background Ambience */}
       <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[60%] bg-primary radial-gradient opacity-[0.03] blur-[100px] pointer-events-none"></div>
 
       <div className={`relative z-10 flex flex-col h-full px-8 py-12 max-w-md mx-auto w-full transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -86,7 +95,6 @@ const Login: React.FC = () => {
            <p className="text-zinc-500 text-[10px] font-mono uppercase tracking-[0.3em] animate-pulse">System Online</p>
         </div>
 
-        {/* User Lobby List */}
         <div className="flex-1 overflow-y-auto space-y-4 no-scrollbar pb-8 px-1">
             {availableUsers.length === 0 ? (
                 <div className="text-center py-20 border border-dashed border-zinc-800 bg-zinc-900/30">
@@ -102,26 +110,23 @@ const Login: React.FC = () => {
                             className="group relative bg-card border border-zinc-900 p-1 pr-16 transition-all hover:border-primary/50 hover:bg-zinc-900 animate-cinematic-slide-up"
                         >
                             <button 
-                            onClick={() => handleLogin(u.id)}
+                            onClick={() => login(u.id)}
                             className="flex items-center w-full p-4 text-left"
                             >
                                 <div className="w-12 h-12 bg-zinc-950 border border-zinc-800 flex items-center justify-center text-zinc-600 mr-5 group-hover:text-primary group-hover:border-primary transition-all shadow-lg">
                                     <User size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="text-white font-bold text-lg uppercase tracking-wide group-hover:text-primary transition-colors">{u.name}</h3>
+                                    <h3 className="text-white font-bold text-lg uppercase tracking-wide group-hover:text-primary transition-colors truncate max-w-[140px]">{u.name}</h3>
                                     <div className="flex items-center mt-1">
-                                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
-                                        <p className="text-[9px] text-zinc-500 font-mono group-hover:text-zinc-300">READY</p>
+                                        <div className={`w-1.5 h-1.5 rounded-full mr-2 animate-pulse ${u.name.startsWith('[CLIENT]') ? 'bg-primary' : 'bg-emerald-500'}`}></div>
+                                        <p className="text-[9px] text-zinc-500 font-mono group-hover:text-zinc-300">{u.name.startsWith('[CLIENT]') ? 'CLIENT LOG' : 'READY'}</p>
                                     </div>
                                 </div>
                             </button>
-                            
-                            {/* Delete Action */}
                             <button 
                             onClick={(e) => handleDeleteClick(e, u)}
                             className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-zinc-700 hover:text-red-500 hover:bg-red-500/10 transition-all z-20 cursor-pointer active:scale-90"
-                            title="Delete User"
                             >
                                 <Trash2 size={16} />
                             </button>
@@ -131,8 +136,15 @@ const Login: React.FC = () => {
             )}
         </div>
 
-        {/* Register Form */}
-        <div className="mt-auto pt-8 border-t border-zinc-900">
+        <div className="mt-auto space-y-3">
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full flex items-center justify-center gap-3 py-4 bg-zinc-900 border border-zinc-800 text-[10px] font-black text-zinc-400 uppercase tracking-widest hover:border-primary/50 hover:text-primary transition-all"
+          >
+            <Upload size={16} /> Importă Protocol Client
+          </button>
+          <input type="file" ref={fileInputRef} onChange={handleSystemImport} accept=".rdz" className="hidden" />
+
           <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest mb-3 pl-1">New Profile</p>
           <form onSubmit={handleRegister} className="relative group">
               <input 
@@ -140,7 +152,7 @@ const Login: React.FC = () => {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 className="w-full bg-surface border border-zinc-800 text-white pl-6 pr-16 py-5 focus:border-primary transition-colors placeholder-zinc-700 text-sm font-bold uppercase tracking-widest outline-none"
-                placeholder="Introdu Nume..."
+                placeholder="Nume Atlet..."
               />
               <button 
                   type="submit"
@@ -153,34 +165,20 @@ const Login: React.FC = () => {
         </div>
       </div>
 
-      {/* DELETE CONFIRMATION MODAL */}
       {userToDelete && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-6 animate-fade-in" onClick={() => setUserToDelete(null)}>
             <div className="bg-card border border-zinc-800 p-8 w-full max-w-sm shadow-2xl relative" onClick={e => e.stopPropagation()}>
-                
                 <div className="flex flex-col items-center text-center">
                     <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 text-red-500 border border-red-500/20">
                          <AlertTriangle size={32} />
                     </div>
-                    
-                    <h3 className="text-xl font-black text-white uppercase tracking-wide mb-2">Ștergi utilizatorul?</h3>
+                    <h3 className="text-xl font-black text-white uppercase tracking-wide mb-2">Ștergi profilul?</h3>
                     <p className="text-zinc-400 text-sm mb-6 font-mono">
-                        <span className="text-white font-bold border-b border-zinc-700">{userToDelete.name}</span> va fi șters definitiv, împreună cu tot istoricul antrenamentelor.
+                        Datele pentru <span className="text-white font-bold">{userToDelete.name}</span> vor fi eliminate.
                     </p>
-
                     <div className="grid grid-cols-2 gap-3 w-full">
-                        <button 
-                            onClick={() => setUserToDelete(null)}
-                            className="bg-zinc-900 border border-zinc-700 text-white font-bold py-4 hover:bg-zinc-800 transition-colors uppercase tracking-widest text-xs"
-                        >
-                            Anulează
-                        </button>
-                        <button 
-                            onClick={confirmDelete}
-                            className="bg-red-600 text-white font-bold py-4 hover:bg-red-700 transition-colors uppercase tracking-widest text-xs shadow-glow"
-                        >
-                            Șterge
-                        </button>
+                        <button onClick={() => setUserToDelete(null)} className="bg-zinc-900 border border-zinc-700 text-white font-bold py-4 uppercase tracking-widest text-xs">Anulează</button>
+                        <button onClick={confirmDelete} className="bg-red-600 text-white font-bold py-4 uppercase tracking-widest text-xs shadow-glow">Șterge</button>
                     </div>
                 </div>
             </div>

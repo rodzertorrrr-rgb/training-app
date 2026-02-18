@@ -1,97 +1,135 @@
-
-import React from 'react';
-import { useData } from '../context/DataContext';
-import { Trash2, Calendar, CheckCircle2, History as HistoryIcon, ArrowUpRight, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { useData } from '../context/DataContext.tsx';
+import { Trash2, CheckCircle2, ChevronRight, History as HistoryIcon, AlertTriangle, Zap, Layers, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const History: React.FC = () => {
   const { sessions, deleteSession } = useData();
   const navigate = useNavigate();
+  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
 
   const handleDelete = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation(); // Prevent navigation when clicking delete
-    if (window.confirm("Ești sigur că vrei să ștergi această sesiune? Istoricul de progres va fi recalculat.")) {
-      deleteSession(id);
+    e.stopPropagation();
+    setSessionToDelete(id);
+  };
+
+  const confirmDelete = () => {
+    if (sessionToDelete) {
+      deleteSession(sessionToDelete);
+      setSessionToDelete(null);
     }
+  };
+
+  const calculateSessionVolume = (session: any) => {
+    return session.exercises.reduce((total: number, ex: any) => {
+      return total + ex.sets.reduce((setTotal: number, s: any) => {
+        return setTotal + (Number(s.weight) || 0) * (Number(s.reps) || 0);
+      }, 0);
+    }, 0);
+  };
+
+  const calculateImpactUnits = (session: any) => {
+    return session.exercises.reduce((total: number, ex: any) => {
+      return total + ex.sets.filter((s: any) => s.type !== 'RAMP_UP' && s.isCompleted).length;
+    }, 0);
   };
 
   if (sessions.length === 0) {
     return (
-      <div className="text-center py-32 opacity-50 animate-fade-in">
-        <div className="border border-zinc-800 w-16 h-16 flex items-center justify-center rounded-full mx-auto mb-6">
-            <HistoryIcon className="text-zinc-600" size={24} />
+      <div className="text-center py-32 animate-fade-in px-8">
+        <div className="border-2 border-dashed border-zinc-900 w-20 h-20 flex items-center justify-center mx-auto mb-8 rounded-full">
+            <HistoryIcon className="text-zinc-800" size={32} />
         </div>
-        <h3 className="text-lg font-bold text-white mb-2 uppercase tracking-widest">Istoric Gol</h3>
-        <p className="text-zinc-500 text-xs font-mono">Completează primul antrenament.</p>
+        <h3 className="text-xl font-black text-white mb-2 uppercase tracking-widest">ISTORIC GOL</h3>
+        <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed">Începe o sesiune de antrenament pentru a popula acest registru de performanță.</p>
       </div>
     );
   }
 
   return (
-    <div className="pb-10 animate-fade-in">
-      <header className="mb-8 pl-4 border-l-4 border-primary animate-slide-down">
-          <h2 className="text-3xl font-black text-white uppercase tracking-tight">Istoric</h2>
-          <p className="text-zinc-500 text-xs font-mono uppercase tracking-widest mt-1">Sesiuni finalizate</p>
+    <div className="pb-32 animate-fade-in">
+      <header className="mb-12 flex items-start gap-5">
+          <div className="w-[6px] h-12 bg-primary shadow-gold-glow"></div>
+          <div>
+            <h2 className="text-4xl font-black text-white uppercase tracking-tighter leading-none">REGISTRU</h2>
+            <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">ISTORIC PERFORMANȚĂ</p>
+          </div>
       </header>
       
-      <div className="space-y-4">
+      <div className="space-y-6">
         {sessions.map((session, index) => (
           <div 
             key={session.id} 
             onClick={() => navigate(`/history/${session.id}`)}
             style={{ animationDelay: `${index * 50}ms` }}
-            className="group relative bg-card border border-zinc-800 p-6 hover:border-primary/50 transition-all duration-300 cursor-pointer active:scale-[0.99] animate-slide-up-fade opacity-0 fill-mode-forwards"
+            className="group relative bg-card border border-white/5 rounded-3xl transition-all duration-300 cursor-pointer animate-slide-up shadow-premium overflow-hidden hover:border-primary/20"
           >
-            {/* Header */}
-            <div className="flex justify-between items-start mb-6 pb-4 border-b border-zinc-900">
-              <div>
-                <div className="flex items-center text-primary mb-2">
-                    <Calendar size={12} className="mr-2" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">{new Date(session.completedAt!).toLocaleDateString('ro-RO')}</span>
+            <div className="p-6 pb-4 flex justify-between items-start">
+              <div className="flex-1 pr-12">
+                <div className="flex items-center gap-3 mb-3">
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-primary/20">
+                        {new Date(session.completedAt!).toLocaleDateString('ro-RO')}
+                    </span>
+                    <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
+                       {session.exercises.length} EXERCIȚII
+                    </span>
                 </div>
-                <h3 className="text-xl font-bold text-white leading-none uppercase">{session.dayName.split(':')[0]}</h3>
-                <p className="text-[10px] text-zinc-500 mt-1 uppercase tracking-wider">{session.dayName.split(':')[1]}</p>
+                <h3 className="text-2xl font-black text-white uppercase tracking-tight group-hover:text-primary transition-colors">
+                    {session.dayName.split(':')[0]}
+                </h3>
+                <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.2em] mt-1">
+                    {session.dayName.split(':')[1] || 'Protocol Standard'}
+                </p>
               </div>
               <button 
                 onClick={(e) => handleDelete(e, session.id)}
-                className="w-8 h-8 flex items-center justify-center text-zinc-700 hover:text-red-500 hover:bg-red-500/10 transition-colors rounded-sm active:scale-90"
+                className="w-12 h-12 flex items-center justify-center bg-zinc-900 border border-white/5 text-zinc-700 hover:text-red-500 hover:bg-red-500/10 transition-all rounded-2xl"
               >
-                <Trash2 size={16} />
+                <Trash2 size={18} />
               </button>
             </div>
 
-            {/* Quick Summary Preview */}
-            <div className="space-y-2 mb-4">
-              {session.exercises.slice(0, 3).map((ex) => {
-                const topSet = ex.sets.find(s => s.type === 'TOP_SET');
-                if (!topSet) return null;
-                return (
-                  <div key={ex.id} className="flex justify-between items-center text-xs">
-                    <span className="text-zinc-400 font-bold truncate pr-4 max-w-[70%] uppercase">{ex.name}</span>
-                    <div className="font-mono text-zinc-500">
-                      <span className="text-white">{topSet.weight}</span>kg
-                    </div>
+            <div className="grid grid-cols-2 border-t border-white/5 bg-zinc-950/30">
+               <div className="p-5 flex flex-col gap-1 border-r border-white/5">
+                  <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Seturi Hipertrofice</span>
+                  <div className="flex items-center gap-2">
+                    <Zap size={14} className="text-primary"/>
+                    <span className="text-lg font-black text-white leading-none">{calculateImpactUnits(session)}</span>
                   </div>
-                );
-              })}
-              {session.exercises.length > 3 && (
-                  <div className="text-[10px] text-zinc-600 font-mono pt-1 text-center">
-                      + {session.exercises.length - 3} MORE EXERCISES
+               </div>
+               <div className="p-5 flex flex-col gap-1">
+                  <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Volum Total</span>
+                  <div className="flex items-center gap-2">
+                    <Layers size={14} className="text-primary"/>
+                    <span className="text-lg font-black text-white leading-none">{calculateSessionVolume(session).toLocaleString()} <span className="text-[10px] font-normal text-zinc-700 ml-1">KG</span></span>
                   </div>
-              )}
+               </div>
             </div>
             
-            <div className="flex justify-between items-center pt-2 mt-2 border-t border-zinc-900">
-                 <div className="flex items-center text-[10px] text-emerald-600 font-mono uppercase tracking-widest">
-                    <CheckCircle2 size={10} className="mr-2" /> Completed
+            <div className="px-6 py-4 bg-primary/5 flex justify-between items-center group-hover:bg-primary transition-all">
+                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary group-hover:text-black">
+                    <Share2 size={16} /> SHARE STORY
                  </div>
-                 <div className="flex items-center text-[10px] text-primary font-bold uppercase tracking-widest group-hover:translate-x-1 transition-transform">
-                    View Report <ChevronRight size={12} className="ml-1" />
-                 </div>
+                 <ChevronRight size={18} className="text-primary group-hover:text-black transition-transform group-hover:translate-x-1" />
             </div>
           </div>
         ))}
       </div>
+
+      {sessionToDelete && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-black/95 backdrop-blur-md animate-fade-in" onClick={() => setSessionToDelete(null)}>
+            <div className="bg-card border-2 border-red-900/50 p-10 rounded-[2.5rem] w-full max-w-sm text-center shadow-2xl animate-scale-up" onClick={e => e.stopPropagation()}>
+                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-8 text-red-500 border border-red-500/20">
+                     <AlertTriangle size={36} />
+                </div>
+                <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4">Elimini Sesiunea?</h3>
+                <div className="grid grid-cols-2 gap-4">
+                    <button onClick={() => setSessionToDelete(null)} className="bg-zinc-900 border border-white/5 text-zinc-400 font-black py-5 rounded-2xl uppercase tracking-widest text-[10px]">Nu</button>
+                    <button onClick={confirmDelete} className="bg-red-600 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-[10px] shadow-lg shadow-red-500/20">Da, Șterge</button>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,9 +1,15 @@
 
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
 
 const rootElement = document.getElementById('root');
+const loader = document.getElementById('initial-loader');
+const errDisplay = document.getElementById('error-display');
+
+const hideLoader = () => {
+    if (loader) loader.style.display = 'none';
+};
 
 if (!rootElement) {
   const err = "FATAL: Could not find root element to mount to";
@@ -11,27 +17,23 @@ if (!rootElement) {
   document.body.innerHTML = `<div style="color:red; padding:20px;">${err}</div>`;
 } else {
   try {
-    const root = ReactDOM.createRoot(rootElement);
+    const root = createRoot(rootElement);
     root.render(
       <React.StrictMode>
         <App />
       </React.StrictMode>
     );
-    console.log("React mounted successfully.");
+    console.log("React mounting initiated.");
     
-    // Hide loader if it exists
-    const loader = document.getElementById('initial-loader');
-    if (loader) loader.style.display = 'none';
+    // Timeout scurt pentru a lăsa React să facă prima randare
+    setTimeout(hideLoader, 100);
     
   } catch (err) {
     console.error("FATAL: React mount failed", err);
-    const errDisplay = document.getElementById('error-display');
-    const loader = document.getElementById('initial-loader');
-    
-    if (loader) loader.style.display = 'none';
+    hideLoader();
     if (errDisplay) {
         errDisplay.style.display = 'block';
-        errDisplay.innerText = "React Mount Failed: " + err + "\n\nCheck console for details.";
+        errDisplay.innerText = "CRITICAL BOOT ERROR: " + err + "\n\nConsultă consola pentru detalii.";
     }
   }
 }

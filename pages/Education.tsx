@@ -1,118 +1,89 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { EDUCATION_CONTENT } from '../constants';
-import { ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { EduCategory } from '../types';
-
-const CATEGORY_NAMES: Record<EduCategory, string> = {
-    'FOUNDATION': 'A) TEHNICI DE ANTRENAMENT',
-    'EFFORT': 'B) MĂSURAREA EFORTULUI',
-    'CLARITY': 'C) CLARIFICĂRI CRITICE',
-    'STRUCTURE': 'D) STRUCTURA PROGRAMULUI',
-    'RECOVERY': 'E) AUTOREGLARE & RECUPERARE',
-    'ADVANCED': 'F) INDIVIDUALIZARE & AVANSAȚI',
-    'PHILOSOPHY': 'G) FILOSOFIA APLICAȚIEI'
-};
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { EDUCATION_CONTENT } from '../constants.ts';
+import { ChevronDown, ChevronUp, X, Sparkles, ShieldCheck, BookOpen } from 'lucide-react';
 
 const Education: React.FC = () => {
-  const { user } = useAuth();
-  const location = useLocation();
-  const [openSections, setOpenSections] = useState<string[]>([]);
+  const navigate = useNavigate();
+  const [openItems, setOpenItems] = useState<string[]>(['rdz_sec1']);
 
-  // Handle Deep Linking
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const sectionId = params.get('section');
-    if (sectionId) {
-        if (!openSections.includes(sectionId)) {
-            setOpenSections(prev => [...prev, sectionId]);
-        }
-        setTimeout(() => {
-            const el = document.getElementById(sectionId);
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-    }
-  }, [location]);
-
-  const toggleSection = (id: string) => {
-    let newState: string[];
-    if (openSections.includes(id)) {
-        newState = openSections.filter(sid => sid !== id);
-    } else {
-        newState = [...openSections, id];
-    }
-    setOpenSections(newState);
+  const toggleItem = (id: string) => {
+    setOpenItems(prev => prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]);
   };
 
-  // Group Content by Category
-  const groupedContent = EDUCATION_CONTENT.reduce((acc, section) => {
-    const cat = section.category || 'FOUNDATION';
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(section);
-    return acc;
-  }, {} as Record<EduCategory, typeof EDUCATION_CONTENT>);
-
-  // Order of categories
-  const categoryOrder: EduCategory[] = ['FOUNDATION', 'EFFORT', 'CLARITY', 'STRUCTURE', 'RECOVERY', 'ADVANCED', 'PHILOSOPHY'];
-
   return (
-    <div className="pb-24">
-      <header className="mb-8 border-l-4 border-primary pl-4">
-        <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">Tehnică &<br/><span className="text-primary">Raționament</span></h2>
-        <p className="text-zinc-500 text-xs mt-2 font-mono uppercase tracking-widest">
-           Sistemul de operare al hipertrofiei
-        </p>
+    <div className="pb-32 animate-fade-in bg-black min-h-screen">
+      <header className="mb-12 pt-6 px-1 flex justify-between items-start relative z-10">
+        <div className="border-l-4 border-primary pl-6 py-1">
+            <h1 className="text-4xl font-black text-white uppercase tracking-tighter leading-none">
+              MANUAL<br/>
+              <span className="text-primary italic">RDZ</span>
+            </h1>
+            <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.4em] mt-3">
+              Ghidul Intern al Hipertrofiei
+            </p>
+        </div>
+        <button 
+            onClick={() => navigate('/')} 
+            className="p-3 bg-zinc-900/50 backdrop-blur-md border border-white/5 rounded-2xl text-zinc-500 hover:text-white active:scale-90 transition-all"
+        >
+            <X size={24} />
+        </button>
       </header>
 
-      <div className="space-y-8">
-        {categoryOrder.map((cat) => {
-            if (!groupedContent[cat]) return null;
-            return (
-                <div key={cat}>
-                    <h3 className="text-sm font-black text-zinc-500 uppercase tracking-widest mb-3 border-b border-zinc-800 pb-1">
-                        {CATEGORY_NAMES[cat]}
-                    </h3>
-                    <div className="space-y-1">
-                        {groupedContent[cat].map(section => (
-                            <div key={section.id} id={section.id} className="border-2 border-zinc-900 bg-surface">
-                                <button 
-                                  onClick={() => toggleSection(section.id)}
-                                  className={`w-full flex justify-between items-center p-4 text-left transition-all ${
-                                      openSections.includes(section.id) 
-                                      ? 'bg-zinc-900 text-primary border-b-2 border-zinc-900' 
-                                      : 'text-zinc-300 hover:bg-zinc-900 hover:text-white'
-                                  }`}
-                                >
-                                  <span className="font-bold text-sm uppercase tracking-wide">
-                                    {section.title}
-                                  </span>
-                                  {openSections.includes(section.id) ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                                </button>
-                                
-                                {openSections.includes(section.id) && (
-                                  <div className="p-5 text-sm text-zinc-400 leading-relaxed bg-black/50 font-mono">
-                                    {section.type === 'list' && Array.isArray(section.content) ? (
-                                      <ul className="space-y-3">
-                                        {section.content.map((item, idx) => (
-                                          <li key={idx} className="flex items-start">
-                                            <span className="text-primary mr-2">■</span>
-                                            {item}
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    ) : (
-                                      <p>{section.content}</p>
-                                    )}
-                                  </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+      <div className="space-y-4 px-1 relative z-10">
+        {EDUCATION_CONTENT.map((section) => (
+          <div key={section.id} className="rounded-3xl border border-white/5 bg-zinc-950/50 overflow-hidden transition-all shadow-premium backdrop-blur-sm">
+              <button 
+                onClick={() => toggleItem(section.id)}
+                className={`w-full flex justify-between items-center p-6 text-left transition-all ${
+                    openItems.includes(section.id) 
+                    ? 'bg-primary/5 text-primary' 
+                    : 'text-zinc-400 hover:bg-zinc-900/30'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <ShieldCheck size={18} className={openItems.includes(section.id) ? 'text-primary' : 'text-zinc-800'} />
+                  <span className="font-black text-xs uppercase tracking-widest">
+                    {section.title}
+                  </span>
                 </div>
-            )
-        })}
+                {openItems.includes(section.id) ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+              
+              {openItems.includes(section.id) && (
+                <div className="p-8 pt-0 text-[11px] text-zinc-400 leading-relaxed font-medium animate-slide-up border-t border-white/5 bg-black/40">
+                  <ul className="space-y-6 mt-6">
+                    {Array.isArray(section.content) && section.content.map((point: string, pIdx: number) => (
+                      <li key={pIdx} className="flex items-start gap-4">
+                        <div className="mt-1.5 shrink-0 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_#D4AF37]"></div>
+                        <span className="uppercase tracking-tight leading-normal text-zinc-300 font-bold">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+          </div>
+        ))}
       </div>
+
+      <div className="mt-20 p-12 text-center bg-zinc-950/80 rounded-[3rem] border border-white/10 relative overflow-hidden mx-1 shadow-2xl">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-30"></div>
+          <BookOpen size={44} className="mx-auto text-primary/20 mb-6" />
+          <h4 className="text-[11px] font-black text-white uppercase tracking-[0.3em] mb-4">PROTOCOLUL ESTE LEGEA</h4>
+          <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-[0.4em] leading-loose max-w-[240px] mx-auto">
+            Consistența este singura scurtătură către rezultate. Nu modifica protocolul fără motiv.
+          </p>
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="mt-10 text-primary/40 text-[9px] font-black uppercase tracking-widest hover:text-primary transition-colors border-b border-primary/10 pb-1"
+          >
+            Înapoi la început
+          </button>
+      </div>
+      
+      <div className="fixed top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+      <div className="fixed bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
     </div>
   );
 };

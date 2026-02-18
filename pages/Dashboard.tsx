@@ -1,14 +1,23 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useData } from '../context/DataContext';
-import { TRAINING_PROGRAM } from '../constants';
-import { ChevronRight, Dumbbell, Sparkles, Layers, ChevronDown, Target, Zap } from 'lucide-react';
+import { useData } from '../context/DataContext.tsx';
+import { TRAINING_PROGRAM } from '../constants.ts';
+import { 
+  Play, 
+  ChevronRight, 
+  Trophy, 
+  Dumbbell,
+  Target,
+  Zap,
+  Award
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard: React.FC = () => {
-  const { draftSession, startSession, customPrograms } = useData();
+  const { draftSession, startSession, customPrograms, sessions } = useData();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'standard' | 'custom'>('standard');
 
   const handleStart = (dayId: string) => {
@@ -20,91 +29,102 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const renderCard = (day: any, index: number, isCustom: boolean) => {
+  const renderCard = (day: any, isCustom: boolean) => {
     const isDraft = draftSession && draftSession.dayId === day.id;
     return (
       <button
         key={day.id} 
         onClick={() => handleStart(day.id)}
-        className={`w-full text-left p-5 bg-card border transition-all duration-300 animate-slide-up-fade opacity-0 fill-mode-forwards ${
-          isDraft ? 'border-primary shadow-glow scale-[1.01]' : 'border-zinc-800 hover:border-zinc-600'
+        className={`w-full text-left p-5 rounded-2xl border transition-all flex items-center justify-between ${
+          isDraft ? 'bg-primary/5 border-primary/40' : 'bg-surface border-zinc-800 hover:border-zinc-700'
         }`}
-        style={{ animationDelay: `${index * 50}ms` }}
       >
-        <div className="flex justify-between items-start mb-3">
-          <span className={`text-[8px] font-mono uppercase tracking-[0.2em] px-2 py-0.5 border ${isCustom ? 'text-emerald-500 border-emerald-900' : 'text-zinc-500 border-zinc-800'}`}>
-            {isCustom ? 'CUSTOM WORKOUT' : `PROTOCOL 0${index + 1}`}
-          </span>
-          <ChevronRight size={14} className="text-zinc-700" />
+        <div className="flex items-center gap-4">
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDraft ? 'bg-primary text-black' : 'bg-zinc-900 text-primary'}`}>
+            <Dumbbell size={20} />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-white uppercase tracking-tight">{day.name}</h3>
+            <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">{day.exercises.length} Exerciții</p>
+          </div>
         </div>
-        <h3 className={`text-base font-black uppercase tracking-tight mb-4 ${isDraft ? 'text-primary' : 'text-white'}`}>
-          {day.name.includes(':') ? day.name.split(':')[1] : day.name}
-        </h3>
-        <div className="flex items-center text-zinc-500 text-[9px] font-bold uppercase tracking-widest">
-          <Dumbbell size={10} className="mr-1.5" /> {day.exercises.length} EXERCIȚII
-        </div>
+        <ChevronRight size={18} className={isDraft ? 'text-primary' : 'text-zinc-600'} />
       </button>
     );
   };
 
   return (
-    <div className="animate-fade-in pb-12">
-      <header className="mb-6 pt-4 border-l-4 border-primary pl-4">
-        <h2 className="text-4xl font-black text-white uppercase tracking-tighter leading-none mb-1 font-heading">
-          /// RDZ<br /><span className="text-primary">PROTOCOL</span>
-        </h2>
-        
-        <button 
-          onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-          className="flex items-center gap-2 mt-4 py-2.5 px-4 bg-zinc-900/50 border border-zinc-800 text-zinc-400 hover:text-primary transition-all active:scale-95"
-        >
-          <div className={`transition-transform duration-300 ${isDrawerOpen ? 'rotate-180 text-primary' : ''}`}>
-            <ChevronDown size={14} />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] font-mono">
-            {isDrawerOpen ? 'ÎNCHIDE SELECTORUL' : 'ALEGE ANTRENAMENTUL'}
-          </span>
+    <div className="animate-fade-in space-y-8">
+      <header className="flex items-center justify-between pt-2">
+        <div>
+          <h2 className="text-2xl font-black text-white uppercase tracking-tight">Salut, {user?.name.split(' ')[0]}</h2>
+          <p className="text-zinc-500 text-xs font-medium">Ești gata pentru progres?</p>
+        </div>
+        <button onClick={() => navigate('/achievements')} className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-primary">
+           <Award size={20} />
         </button>
       </header>
 
-      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isDrawerOpen ? 'max-h-[1000px] opacity-100 mb-10' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-        <div className="flex p-1 bg-zinc-950 border border-zinc-900 mb-6">
-          <button onClick={() => setActiveTab('standard')} className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === 'standard' ? 'bg-primary text-black' : 'text-zinc-500'}`}>
-            <Layers size={12} className="inline mr-2" /> STANDARD
-          </button>
-          <button onClick={() => setActiveTab('custom')} className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === 'custom' ? 'bg-emerald-500 text-black' : 'text-zinc-500'}`}>
-            <Sparkles size={12} className="inline mr-2" /> PERSONALIZAT
-          </button>
+      {draftSession && (
+        <div 
+          onClick={() => navigate(`/workout/${draftSession.dayId}`)}
+          className="bg-primary p-6 rounded-2xl flex items-center justify-between cursor-pointer shadow-lg active:scale-[0.98] transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-black/10 rounded-full flex items-center justify-center">
+              <Play size={18} className="text-black fill-current" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-black/60 uppercase tracking-widest">Antrenament în curs</p>
+              <h3 className="text-lg font-black text-black uppercase tracking-tight">{draftSession.dayName}</h3>
+            </div>
+          </div>
+          <ChevronRight size={24} className="text-black" />
         </div>
+      )}
 
-        <div className="space-y-3">
-          {activeTab === 'standard' ? TRAINING_PROGRAM.map((day, i) => renderCard(day, i, false)) : (
-            <>
-              {customPrograms.map((day, i) => renderCard(day, i, true))}
-              <button onClick={() => navigate('/settings/program-editor')} className="w-full py-4 border border-dashed border-zinc-800 text-zinc-600 text-[10px] font-black uppercase hover:text-white transition-all">+ ADAUGĂ PROTOCOL NOU</button>
-            </>
-          )}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-surface border border-zinc-800 p-5 rounded-2xl flex flex-col gap-2">
+          <Trophy size={18} className="text-emerald-500" />
+          <span className="text-2xl font-black text-white">{sessions.length}</span>
+          <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Sesiuni Totale</span>
+        </div>
+        <div className="bg-surface border border-zinc-800 p-5 rounded-2xl flex flex-col gap-2">
+          <Target size={18} className="text-primary" />
+          <span className="text-2xl font-black text-white">Elite</span>
+          <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Rating Atlet</span>
         </div>
       </div>
 
-      {!isDrawerOpen && draftSession && (
-        <div className="bg-primaryDim border border-primary/30 p-5 flex justify-between items-center animate-scale-in">
-          <div>
-            <div className="flex items-center gap-2 text-[8px] font-black text-primary uppercase tracking-widest mb-1">
-              <Zap size={10} className="animate-pulse" /> SESIUNE ACTIVĂ
-            </div>
-            <p className="text-white font-black uppercase text-lg leading-tight">{draftSession.dayName}</p>
-          </div>
-          <button onClick={() => navigate(`/workout/${draftSession.dayId}`)} className="bg-primary text-black px-6 py-3 text-[10px] font-black uppercase tracking-widest shadow-glow">REIA</button>
+      <section className="space-y-4">
+        <div className="flex gap-2 p-1 bg-zinc-900 rounded-xl">
+           <button 
+             onClick={() => setActiveTab('standard')} 
+             className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === 'standard' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500'}`}
+           >
+             Standard
+           </button>
+           <button 
+             onClick={() => setActiveTab('custom')} 
+             className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === 'custom' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500'}`}
+           >
+             Personalizat
+           </button>
         </div>
-      )}
 
-      {!isDrawerOpen && !draftSession && (
-        <div className="text-center py-20 opacity-30 border border-dashed border-zinc-900">
-          <Dumbbell size={32} className="mx-auto mb-4 text-zinc-700" />
-          <p className="text-[10px] font-mono uppercase tracking-[0.4em]">Ready for execution</p>
+        <div className="space-y-3">
+           {activeTab === 'standard' ? TRAINING_PROGRAM.map(day => renderCard(day, false)) : (
+              <>
+                {customPrograms.length === 0 ? (
+                  <div className="py-12 text-center border border-dashed border-zinc-800 rounded-2xl">
+                    <p className="text-zinc-600 text-xs font-medium mb-4">Niciun protocol personalizat</p>
+                    <button onClick={() => navigate('/settings/program-editor')} className="text-primary font-bold text-[10px] uppercase tracking-widest border border-primary/20 px-4 py-2 rounded-lg">Creează</button>
+                  </div>
+                ) : customPrograms.map(day => renderCard(day, true))}
+              </>
+           )}
         </div>
-      )}
+      </section>
     </div>
   );
 };

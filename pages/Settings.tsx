@@ -1,33 +1,85 @@
-
-import React from 'react';
-import { useData } from '../context/DataContext';
-import { useAuth } from '../context/AuthContext';
+import React, { useRef } from 'react';
+import { useData } from '../context/DataContext.tsx';
+import { useAuth } from '../context/AuthContext.tsx';
 import { 
   Download, 
   ToggleLeft, 
   ToggleRight, 
   FileText, 
   Trash2, 
-  HelpCircle, 
   Plus, 
   LogOut, 
-  Scale, 
   TrendingDown, 
   TrendingUp, 
   Minus,
   ChevronRight,
-  Edit
+  Edit,
+  ShieldCheck,
+  Cpu,
+  Upload
 } from 'lucide-react';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import { useNavigate, Link } from 'react-router-dom';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import { useNavigate } from 'react-router-dom';
 
 const Settings: React.FC = () => {
-  const { advancedMode, toggleAdvancedMode, sessions, customPrograms, deleteCustomProgram, getWeightStats } = useData();
-  const { user, logout, deleteUser } = useAuth();
+  const { 
+    advancedMode, 
+    toggleAdvancedMode, 
+    sessions, 
+    customPrograms, 
+    deleteCustomProgram, 
+    getWeightStats,
+    weightLogs,
+    customExercises
+  } = useData();
+  const { user, logout, deleteUser, importUserData, login } = useAuth();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const weightStats = getWeightStats();
+
+  const handleSystemExport = () => {
+    const dataPackage = {
+        version: "2.1",
+        exportedAt: Date.now(),
+        user: { name: user?.name },
+        sessions,
+        weightLogs,
+        customPrograms,
+        customExercises
+    };
+
+    const blob = new Blob([JSON.stringify(dataPackage)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `RDZ_PROTOCOL_${user?.name?.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.rdz`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleSystemImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const payload = JSON.parse(event.target?.result as string);
+            if (!payload.user || !payload.sessions) throw new Error("Format invalid");
+            
+            const newUserId = importUserData(payload);
+            if (window.confirm(`Profilul [${payload.user.name}] a fost importat cu succes. Vrei să comuți acum pe acest profil?`)) {
+                login(newUserId);
+            }
+        } catch (err) {
+            alert("Eroare la import: Fișierul nu este un protocol RDZ valid.");
+        }
+    };
+    reader.readAsText(file);
+  };
 
   const handleExportCSV = () => {
     const headers = ['Data', 'Protocol', 'Exercitiu', 'Tip Set', 'Greutate', 'Repetari', 'RIR'];
@@ -79,7 +131,7 @@ const Settings: React.FC = () => {
         })
     );
 
-    autoTable(doc, {
+    (doc as any).autoTable({
         head: [['Data', 'Exercițiu', 'Greutate (Top)', 'Reps', 'RIR']],
         body: tableData,
         startY: 35,
@@ -117,7 +169,6 @@ const Settings: React.FC = () => {
         <p className="text-zinc-500 text-[10px] font-mono uppercase tracking-widest mt-2">Configurații & Management Date</p>
       </header>
 
-      {/* 1. CONT UTILIZATOR */}
       <div className="bg-surface border border-zinc-900 p-6 mb-4 relative overflow-hidden group">
          <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-all"></div>
          <div className="flex items-center justify-between">
@@ -134,7 +185,41 @@ const Settings: React.FC = () => {
          </div>
       </div>
 
-      {/* 2. BIO-FEEDBACK (NOU) */}
+      <div className="bg-primaryDim border-2 border-primary/20 p-6 mb-4 relative">
+        <div className="flex items-center gap-2 mb-4">
+            <ShieldCheck size={18} className="text-primary" />
+            <h3 className="text-xs font-black text-white uppercase tracking-widest">Sincronizare Protocol</h3>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
+            <button 
+                onClick={handleSystemExport}
+                className="bg-zinc-950 border border-zinc-800 p-4 flex flex-col items-center gap-2 group hover:border-primary/50 transition-all"
+            >
+                <Cpu size={20} className="text-primary group-hover:scale-110 transition-transform" />
+                <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest group-hover:text-primary">Exportă Date (.rdz)</span>
+            </button>
+            
+            <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-zinc-950 border border-zinc-800 p-4 flex flex-col items-center gap-2 group hover:border-emerald-500/50 transition-all"
+            >
+                <Upload size={20} className="text-emerald-500 group-hover:scale-110 transition-transform" />
+                <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest group-hover:text-emerald-500">Importă Client</span>
+            </button>
+        </div>
+        <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleSystemImport} 
+            accept=".rdz" 
+            className="hidden" 
+        />
+        <p className="text-[8px] text-zinc-600 font-mono uppercase mt-4 text-center leading-relaxed">
+            Folosește fișierele .rdz pentru a transfera datele între atlet și antrenor.
+        </p>
+      </div>
+
       <div className="bg-surface border border-zinc-900 p-6 mb-4">
          <div className="flex justify-between items-start mb-6">
              <div>
@@ -163,7 +248,6 @@ const Settings: React.FC = () => {
          </div>
       </div>
 
-      {/* 3. PROTOCOALE CUSTOM */}
       <div className="bg-surface border border-zinc-900 p-6 mb-4">
          <div className="flex justify-between items-center mb-6">
              <h3 className="text-sm font-black text-white uppercase tracking-widest">Protocoalele Tale</h3>
@@ -194,7 +278,6 @@ const Settings: React.FC = () => {
          </div>
       </div>
 
-      {/* 4. MOD AVANSAT */}
       <div className="bg-surface border border-zinc-900 p-6 mb-4">
         <div className="flex justify-between items-center">
             <div>
@@ -207,7 +290,6 @@ const Settings: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. EXPORT & SIGURANȚĂ */}
       <div className="grid grid-cols-2 gap-3 mb-8">
         <button onClick={handleExportCSV} className="bg-surface border border-zinc-900 p-5 flex flex-col items-center gap-3 hover:bg-zinc-900 transition-all group">
             <FileText size={20} className="text-zinc-600 group-hover:text-white" />
@@ -219,7 +301,6 @@ const Settings: React.FC = () => {
         </button>
       </div>
 
-      {/* DANGER ZONE */}
       <div className="border border-red-900/30 p-6 bg-red-950/5">
         <div className="flex items-center gap-3 mb-4">
             <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
